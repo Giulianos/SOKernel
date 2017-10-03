@@ -18,7 +18,7 @@ static char doc[] =
   "ModulePacker is an appender of binary files to be loaded all together";
 
 /* A description of the arguments we accept. */
-static char args_doc[] = "KernelFile Module1 Module2 ...";
+static char args_doc[] = "KernelFile cmd1 Module1 cmd2 Module2 ...";
 
 /* The options we understand. */
 static struct argp_option options[] = {
@@ -32,7 +32,7 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
 
 
 int main(int argc, char *argv[]) {
-	
+
 	struct arguments arguments;
 
 	arguments.output_file = OUTPUT_FILE;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
 	if(!checkFiles(fileArray)) {
 		return 1;
-	}	
+	}
 
 	return !buildImage(fileArray, arguments.output_file);
 }
@@ -63,23 +63,26 @@ int buildImage(array_t fileArray, char *output_file) {
 	write_file(target, source);
 
 	//Write how many extra binaries we got.
-	int extraBinaries = fileArray.length - 1;
-	fwrite(&extraBinaries, sizeof(extraBinaries), 1, target);	
+	int extraBinaries = (fileArray.length - 1)/2;
+  fwrite(&extraBinaries, sizeof(extraBinaries), 1, target);
 	fclose(source);
 
 	int i;
-	for (i = 1 ; i < fileArray.length ; i++) {
-		FILE *source = fopen(fileArray.array[i], "r");
-		
+	for (i = 1 ; i < fileArray.length ; i+=2) {
+    FILE *source = fopen(fileArray.array[i+1], "r");
+
 		//Write the file size;
-		write_size(target, fileArray.array[i]);
+		write_size(target, fileArray.array[i+1]);
+
+		//Write cmdname
+    write_cmd(target, fileArray.array[i]);
 
 		//Write the binary
 		write_file(target, source);
 
 		fclose(source);
 
-	} 
+	}
 	fclose(target);
 	return TRUE;
 }
@@ -88,14 +91,29 @@ int buildImage(array_t fileArray, char *output_file) {
 int checkFiles(array_t fileArray) {
 
 	int i = 0;
-	for(; i < fileArray.length ; i++) {
-		if(access(fileArray.array[i], R_OK)) {
+	if(access(fileArray.array[0], R_OK)) {
+    printf("Can't open file: %s\n", fileArray.array[0]);
+    return FALSE;
+  }
+  for(i=1; i < fileArray.length ; i+=2) {
+    if(access(fileArray.array[i+1], R_OK)) {
 			printf("Can't open file: %s\n", fileArray.array[i]);
 			return FALSE;
 		}
 	}
 	return TRUE;
 
+}
+
+int write_cmd(FILE *target, char *cmd) {
+  int i=0;
+  char zero = 0;
+
+  while(cmd[i]!=0 && i<255){ i++; }
+  fwrite(cmd, sizeof(uint8_t), i, target);
+  for(;i<=255; i++) {
+    fwrite(&zero, sizeof(uint8_t), 1, target);
+  }
 }
 
 int write_size(FILE *target, char *filename) {
@@ -148,5 +166,3 @@ parse_opt (int key, char *arg, struct argp_state *state)
     }
   return 0;
 }
-
-

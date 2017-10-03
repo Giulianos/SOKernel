@@ -4,7 +4,7 @@
 typedef int (*EntryPoint)();
 typedef struct
 {
-  char * name;
+  char name[256];
   uint8_t id;
   uint8_t * dir;
   uint32_t size;

@@ -9,6 +9,7 @@ QCOW2=$(OSIMAGENAME).qcow2
 IMG=$(OSIMAGENAME).img
 KERNEL=../Kernel/kernel.bin
 USERLAND=../Userland/0000-shellModule.bin ../Userland/0001-helpModule.bin ../Userland/0002-sampleCodeModule.bin ../Userland/0003-fortuneModule.bin ../Userland/0004-clearModule.bin ../Userland/0005-snakeModule.bin
+USERLAND_CMD=shell ../Userland/0000-shellModule.bin help ../Userland/0001-helpModule.bin sample ../Userland/0002-sampleCodeModule.bin fortune ../Userland/0003-fortuneModule.bin clear ../Userland/0004-clearModule.bin snake ../Userland/0005-snakeModule.bin
 
 PACKEDKERNEL=packedKernel.bin
 IMGSIZE=6291456
@@ -19,7 +20,7 @@ $(KERNEL):
 	cd ../Kernel; make
 
 $(PACKEDKERNEL): $(KERNEL) $(USERLAND)
-	$(MP) $(KERNEL) $(USERLAND) -o $(PACKEDKERNEL)
+	$(MP) $(KERNEL) $(USERLAND_CMD) -o $(PACKEDKERNEL)
 
 $(IMG): $(BMFS) $(MBR) $(PURE64) $(PACKEDKERNEL)
 	$(BMFS) $(IMG) initialize $(IMGSIZE) $(MBR) $(PURE64) $(PACKEDKERNEL)

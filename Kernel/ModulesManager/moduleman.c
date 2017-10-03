@@ -65,11 +65,14 @@ module_t * getModules()
 void loadModuleToKernel(uint8_t ** module, uint8_t ** targetModuleAddress, uint8_t moduleNum)
 {
 	uint32_t moduleSize = readUint32(module);
+	readModuleName(module, modules[moduleNum].name);
   ncPrint("Expanding ");
   ncPrintDec(moduleSize);
   ncPrint("bytes of module ");
+	ncPrint(modules[moduleNum].name);
+	ncPrint("(");
   ncPrintDec(moduleNum);
-  ncPrint(" from address 0x");
+  ncPrint(") from address 0x");
   ncPrintHex((uint64_t)(*module));
   ncPrint(" to  0x");
   ncPrintHex((uint64_t)(*targetModuleAddress));
@@ -90,6 +93,16 @@ void loadModuleToRun(uint8_t id)
 void runLoadedModule()
 {
   ((EntryPoint)runtimePage)();
+}
+
+void readModuleName(uint8_t ** source, char * dest)
+{
+  int i;
+  for(i=0; i<256; i++)
+  {
+    dest[i] = (uint8_t*)(*source)[i];
+  }
+  *source += 256;
 }
 
 static uint32_t readUint32(uint8_t ** address)
