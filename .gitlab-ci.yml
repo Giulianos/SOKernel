@@ -1,0 +1,20 @@
+image: giulianos/gitlab_so_builder:1.1
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - cd Toolchain
+    - make all
+    - cd ..
+    - make clean
+    - make all
+
+  only:
+    - master
+
+  artifacts:
+    paths:
+      - Image/
