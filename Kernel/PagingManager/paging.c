@@ -1,14 +1,15 @@
 #include <stdint.h>
 
-uint64_t * PDAddr = (uint64_t *)0x10000;
+#define USERLAND_LOGIC_PAGE 255
 
-void mapUserspace(uint8_t * physicalAddr)
+typedef uint64_t PDEntry_t;
+
+PDEntry_t * PDAddr = (PDEntry_t *)0x10000;
+uint64_t userlandPhysicalPage = 10;
+
+void mapUserspace()
 {
-  //Me fijo de no querer pisar el espacio del kernel.
-  if((uint64_t)physicalAddr>0x1400000)
-  {
-    //Estoy mapeando la entrada 9 de la PD (20MB) a physicalAddr
-    uint64_t aux = PDAddr[9] & 0xFFF0000000000FFF; //Clean current address
-    PDAddr[9] = aux & ((uint64_t)physicalAddr&0xFFFFFFFFFF000); //Set physicalAddr
-  }
+  // Como inicialmente tenemos mapeo identidad, obtenemos la direccion fisica de la pagina 10 buscando la entrada
+  // numero 10 de la PD.
+  PDAddr[USERLAND_LOGIC_PAGE] = PDAddr[userlandPhysicalPage];
 }
