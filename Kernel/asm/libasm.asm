@@ -1,6 +1,7 @@
 global cpuVendor
 global sti
 global cli
+global reloadCR3
 
 section .text
 
@@ -34,4 +35,9 @@ sti:
 
 cli:
 	cli
+	ret
+
+reloadCR3:
+	mov rax, cr3
+	mov cr3, rax
 	ret
