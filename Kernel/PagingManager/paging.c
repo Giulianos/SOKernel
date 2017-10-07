@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <lib.h>
 
 #define USERLAND_LOGIC_PAGE 255
 
@@ -13,4 +14,10 @@ void mapUserspace(uint64_t pageAddr)
   // numero 10 de la PD.
   uint64_t pageNum = pageAddr/0x200000;
   PDAddr[USERLAND_LOGIC_PAGE] = PDAddr[pageNum];
+	reloadCR3();
+}
+
+uint64_t getLogicalUserlandPage()
+{
+	return USERLAND_LOGIC_PAGE*0x200000;
 }
