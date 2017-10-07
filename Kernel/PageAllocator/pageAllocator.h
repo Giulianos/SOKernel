@@ -8,4 +8,9 @@
 #define PAGE_SIZE 2 //2 MB
 #define USED_PAGE 1
 #define LAST_KERNEL_PAGE 9
+
+
+uint64_t allocatePage();
+uint64_t allocateSinglePage();
+
 #endif
