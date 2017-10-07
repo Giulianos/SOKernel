@@ -1,6 +1,7 @@
 #include <lib.h>
 #include "modules.h"
 #include <naiveConsole.h>
+#include "../PageAllocator/pageAllocator.h"
 
 static module_t modules[256] __attribute__ ((section (".data"))); //BSS will be cleared, so let's put it in data
 
@@ -21,7 +22,7 @@ extern uint8_t endOfKernel;
 */
 
 static uint8_t * expandedModulesArea = (uint8_t *)0xA00000; //10MB
-static uint8_t * runtimePage = (uint8_t *)0x1400000; //20MB
+static uint8_t * runtimePage = (uint8_t *)12; //20MB
 
 static uint8_t expandedModulesQuantity __attribute__ ((section (".data"))); //BSS will be cleared, so let's put it in data
 
@@ -89,6 +90,8 @@ void loadModuleToKernel(uint8_t ** module, uint8_t ** targetModuleAddress, uint8
 
 void loadModuleToRun(uint8_t id)
 {
+  runtimePage = (uint8_t *)allocatePage();
+  mapUserspace(runtimePage);
   memcpy(runtimePage, modules[id].dir, modules[id].size);
 }
 
