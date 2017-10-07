@@ -42,7 +42,7 @@ void * initializeKernelBinary()
 
 int main()
 {
-	mapUserspace();
+	//mapUserspace();
 	configureInterrupts();
 	terminalInit();
 
