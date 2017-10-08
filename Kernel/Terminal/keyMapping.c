@@ -1,5 +1,5 @@
 #include "keyMapping.h"
-uint8_t getAscii(keycode_t key, uint8_t state)
+uint8_t getAsciiUS(keycode_t key, uint8_t state)
 {
   if(((state & SHIFT_PRESSED) || (state & RIGHT_SHIFT_PRESSED)) && (state & CAPS_LOCK_ENABLED))
   switch (key.code)
@@ -216,11 +216,11 @@ uint8_t getAscii(keycode_t key, uint8_t state)
 
     }
   }
-
+  return '.';
 }
 
 //returns either key is Modifier or not
-uint8_t updateState(keycode_t key, uint8_t *state)
+uint8_t updateStateUS(keycode_t key, uint8_t *state)
 {
   //shift
   if(key.code == 0x3F)
