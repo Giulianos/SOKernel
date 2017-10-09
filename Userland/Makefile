@@ -1,12 +1,15 @@
 include Makefile.inc
 
-all: sampleCodeModule shellModule helpModule fortuneModule clearModule snakeModule
+all: sampleCodeModule shellModule helpModule fortuneModule clearModule snakeModule blobs
 
 shellModule:
 		cd shellModule; make
 
 helpModule:
 		cd helpModule; make
+
+blobs:
+		cd blobsWarModule ; make
 
 clearModule:
 		cd clearModule; make
@@ -25,7 +28,8 @@ clean:
 	cd helpModule; make clean
 	cd shellModule; make clean
 	cd snakeModule; make clean
+	cd blobs; make clean
 	rm -rf *.bin
 
 
-.PHONY: shellModule sampleCodeModule helpModule all clean fortuneModule clearModule snakeModule
+.PHONY: shellModule sampleCodeModule helpModule all clean fortuneModule clearModule snakeModule blobs

@@ -27,7 +27,8 @@ uint8_t getAsciiLA(keycode_t key, uint8_t state)
     case 0x29: return 'i';
     case 0x2A: return 'o';
     case 0x2B: return 'p';
-
+    case 0x2C: return '[';
+    case 0x2D: return ']';
     case 0x33: return 'a';
     case 0x34: return 's';
     case 0x35: return 'd';
@@ -187,7 +188,8 @@ uint8_t getAsciiLA(keycode_t key, uint8_t state)
       case 0x29: return 'i';
       case 0x2A: return 'o';
       case 0x2B: return 'p';
-
+      case 0x2C: return '[';
+      case 0x2D: return ']';
       case 0x33: return 'a';
       case 0x34: return 's';
       case 0x35: return 'd';
