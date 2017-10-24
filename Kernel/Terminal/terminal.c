@@ -4,6 +4,7 @@
 #include "../MouseDriver/driver.h"
 #include "../VideoDriver/driver.h"
 #include "../ModulesManager/modules.h"
+#include "../SystemCalls/sbrk/sbrk.h"
 #include "keyMapping.h"
 #include "buffer.h"
 
@@ -27,6 +28,7 @@
 #define SYSCALL_TOGGLEVIDEO 0x45
 #define SYSCALL_VIDEODRAW 0x046
 #define SYSCALL_GETKEYSTATE 0x47
+#define SYSCALL_SBRK 0x2D
 
 static uint8_t screenText[SCREEN_HEIGHT][SCREEN_WIDTH];
 static uint8_t selectedText[SCREEN_HEIGHT][SCREEN_WIDTH];
@@ -275,6 +277,8 @@ uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t 
     case SYSCALL_GETKEYSTATE:
       *((uint8_t *)rbx) = getKeyState(rcx);
        break;
+    case SYSCALL_SBRK:
+      return syscall_sbrk();
     default:
       return 0;//imprimo "Undefined syscall"
   }
