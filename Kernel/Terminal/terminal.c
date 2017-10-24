@@ -278,7 +278,7 @@ uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t 
       *((uint8_t *)rbx) = getKeyState(rcx);
        break;
     case SYSCALL_SBRK:
-      return syscall_sbrk();
+      *((uint64_t *)rbx) = syscall_sbrk();
     default:
       return 0;//imprimo "Undefined syscall"
   }

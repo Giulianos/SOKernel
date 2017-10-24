@@ -28,7 +28,7 @@ clean:
 	cd helpModule; make clean
 	cd shellModule; make clean
 	cd snakeModule; make clean
-	cd blobs; make clean
+	cd blobsWarModule; make clean
 	rm -rf *.bin
 
 

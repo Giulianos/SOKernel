@@ -40,5 +40,11 @@ int main() {
 	printf("my_var=%d is located at %x\n", my_var, &my_var);
 	//printf("PDP Base Address[0:16]: %x\n", (*pml4>>12)&0xFFFF);
 	//printf("PDP Base Address[0:16]: %x\n", (*pml4>>12)&0xFFFF);
+
+	uint64_t aux;
+	systemCall(0x2D, &aux, 0, 0, 0, 0);
+	printf("mi pagina es: %x\n", aux);
+
+
 	return 0xDEADBEEF;
 }
