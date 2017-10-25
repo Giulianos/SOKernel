@@ -1,9 +1,9 @@
 include Makefile.inc
 
-all: sampleCodeModule shellModule helpModule fortuneModule clearModule snakeModule
+all: sampleCodeModule idleModule helpModule fortuneModule clearModule snakeModule aModule bModule
 
-shellModule:
-		cd shellModule; make
+idleModule:
+		cd idleModule; make
 
 helpModule:
 		cd helpModule; make
@@ -20,12 +20,20 @@ sampleCodeModule:
 snakeModule:
 	cd snakeModule; make
 
+aModule:
+	cd aModule; make
+
+bModule:
+	cd bModule; make
+
 clean:
 	cd SampleCodeModule; make clean
 	cd helpModule; make clean
-	cd shellModule; make clean
+	cd idleModule; make clean
 	cd snakeModule; make clean
+	cd aModule; make clean
+	cd bModule; make clean
 	rm -rf *.bin
 
 
-.PHONY: shellModule sampleCodeModule helpModule all clean fortuneModule clearModule snakeModule
+.PHONY: idleModule sampleCodeModule helpModule all clean fortuneModule clearModule snakeModule aModule bModule

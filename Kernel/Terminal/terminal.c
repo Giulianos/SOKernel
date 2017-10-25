@@ -3,7 +3,7 @@
 #include "../KeyboardDriver/driver.h"
 #include "../MouseDriver/driver.h"
 #include "../VideoDriver/driver.h"
-#include "../ModulesManager/modules.h"
+#include "../Scheduler/process.h"
 #include "keyMapping.h"
 #include "buffer.h"
 
@@ -27,6 +27,7 @@
 #define SYSCALL_TOGGLEVIDEO 0x45
 #define SYSCALL_VIDEODRAW 0x046
 #define SYSCALL_GETKEYSTATE 0x47
+#define SYSCALL_GIVEUPCPU 0x48
 
 static uint8_t screenText[SCREEN_HEIGHT][SCREEN_WIDTH];
 static uint8_t selectedText[SCREEN_HEIGHT][SCREEN_WIDTH];
@@ -235,11 +236,8 @@ void run(uint64_t moduleNumber)
     }
     else
     {
-      loadModuleToRun(moduleNumber);
-      runLoadedModule();
+      scheduleProcess(createProcess(moduleNumber, 0));
     }
-    loadModuleToRun(0); //Go back to shell
-  	runLoadedModule();
 }
 
 uint8_t toggleVideoMode()
@@ -261,7 +259,10 @@ uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t 
       run(rbx);
       break; //Recibe el numero de modulo, lo copia en memoria y lo ejecuta
     case SYSCALL_EXIT:
-      run(0x00);
+      killProc(currentProc());
+      break;
+    case SYSCALL_GIVEUPCPU:
+      schedule();
       break;
     case SYSCALL_TOGGLEVIDEO:
       toggleVideoMode();
@@ -274,12 +275,9 @@ uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t 
       break;
     case SYSCALL_GETKEYSTATE:
       *((uint8_t *)rbx) = getKeyState(rcx);
-       break;
-    default:
-      return 0;//imprimo "Undefined syscall"
+      break;
   }
   return 0;
-
 }
 
 //MOUSE

@@ -6,6 +6,7 @@
 #include <interrupts.h>
 #include "Terminal/terminal.h"
 #include "PagingManager/paging.h"
+#include "Scheduler/process.h"
 #include "ModulesManager/modules.h"
 
 extern uint8_t text;
@@ -42,13 +43,21 @@ void * initializeKernelBinary()
 
 int main()
 {
-	//mapUserspace();
+	pcb_t idleProc, aProc, bProc;
+
+	initializeScheduler();
+	idleProc = createProcess(0, 0);
+	//scheduleProcess(idleProc);
+	aProc = createProcess(6, 0);
+	scheduleProcess(aProc);
+	bProc = createProcess(7, 0);
+	scheduleProcess(bProc);
+	schedule();
+	ncPrint("El proximo proceso en la cola es: ");
+	ncPrintDec(currentProc());
 	configureInterrupts();
 	terminalInit();
-
-	//Run shell
-	loadModuleToRun(0);
-	runLoadedModule();
+	switchToProcess();
 
 	while(1){
 	}

@@ -11,6 +11,8 @@ static int my_var = 20;
 uint64_t * pd = (uint64_t *)0x10000;
 
 int main() {
+	int var1;
+	int var2;
 	//Lets print something through syscalls
 	char buffer[40];
 	uint64_t * pml4 = (char *)0x2000;
@@ -40,5 +42,8 @@ int main() {
 	printf("my_var=%d is located at %x\n", my_var, &my_var);
 	//printf("PDP Base Address[0:16]: %x\n", (*pml4>>12)&0xFFFF);
 	//printf("PDP Base Address[0:16]: %x\n", (*pml4>>12)&0xFFFF);
+
+	printf("El stack crece hacia %s\n", (&var1<&var2)?"abajo":"arriba");
+
 	return 0xDEADBEEF;
 }

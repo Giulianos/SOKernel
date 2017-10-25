@@ -10,5 +10,6 @@ char *cpuVendor(char *result);
 void sti();
 void cli();
 void reloadCR3();
+uint64_t getSampleRFLAGS();
 
 #endif

@@ -12,5 +12,7 @@
 
 uint64_t allocatePage();
 uint64_t allocateSinglePage();
+uint64_t pageSize();
+void freePage(uint64_t pageAddress);
 
 #endif
