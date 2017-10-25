@@ -10,7 +10,6 @@
 #define ON 1
 #define OFF 0
 #include "blobsBack.h"
-void *malloc(unsigned nbytes);
 int buscarMovimientoSimple(tipoJuego * m, int * movimiento)
 {
 	int i, j, k, l, arr, abj, izq, der, flag = 0;
@@ -186,8 +185,8 @@ int k;
 			Partida->tablero.matriz[k]=aux2;
 		}
 	}
-for(int x=0;x<10;x++)
-	for(int y=0; y<10;y++)
+for(int x=0;x<Partida->tablero.alto;x++)
+	for(int y=0; y<Partida->tablero.ancho;y++)
 		Partida->tablero.matriz[x][y]=0;
 
 

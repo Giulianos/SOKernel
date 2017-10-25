@@ -10,7 +10,7 @@
 #define OFF 0
 
 /*main*/
-void *malloc(unsigned nbytes);
+
 int main()
 {
 	/*Declaraciones*/
