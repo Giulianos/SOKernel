@@ -4,7 +4,7 @@
 
 typedef struct
 {
-	int matriz[10][10];
+	int **matriz;
 	int ancho;
 	int alto;
 }tablero;

@@ -10,7 +10,7 @@
 #define OFF 0
 
 /*main*/
-
+void *malloc(unsigned nbytes);
 int main()
 {
 	/*Declaraciones*/
@@ -172,14 +172,31 @@ imprimirTablero(tipoJuego * Partida)
 void
 pedirDimensiones(tipoJuego * Partida)
 {
+	Partida->tablero.alto=0;
+	Partida->tablero.ancho=0;
+	char ancho[20];
+	char alto[20];
  /* Se piden ancho y alto al usuario hasta que cumpla con las condiciones.*/
  do{
- Partida->tablero.ancho =10;
+ 	printf("ingrese ancho\n");
+ 	pedirComando(ancho);
+ 	for(int x=0;ancho[x]!='\0';x++){
+ 		
+ 		Partida->tablero.ancho=Partida->tablero.ancho*10+ancho[x]-'0';
+ 	}
  }while(!(Partida->tablero.ancho > 2 && Partida->tablero.ancho < 31 ));
  
  do{
- Partida->tablero.alto = 10;
+ 	printf("ingrese alto\n");
+ 	pedirComando(alto);
+ 	for(int x=0;alto[x]!='\0';x++){
+
+ 		Partida->tablero.alto=Partida->tablero.alto*10+alto[x]-'0';
+ 	}
  }while(!(Partida->tablero.alto > 2 && Partida->tablero.alto < 31 ));
+
+printf("%d %d", Partida->tablero.alto,Partida->tablero.ancho);
+
 }
 
 void

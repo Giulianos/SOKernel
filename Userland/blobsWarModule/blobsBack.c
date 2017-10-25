@@ -6,11 +6,11 @@
 #include "include/stdio.h"
 #include "include/string.h"
 
-
+#define NULL 0
 #define ON 1
 #define OFF 0
 #include "blobsBack.h"
-
+void *malloc(unsigned nbytes);
 int buscarMovimientoSimple(tipoJuego * m, int * movimiento)
 {
 	int i, j, k, l, arr, abj, izq, der, flag = 0;
@@ -174,7 +174,18 @@ int
 crearTablero(tipoJuego * Partida)
 {
  /* Se reserva espacio suficiente en memoria para toda la Partida->*/
-
+int **aux = NULL;
+int *aux2=NULL;
+int k;
+ aux = malloc( Partida->tablero.alto * sizeof(int *));
+ if(aux != NULL)
+ 	{Partida->tablero.matriz = aux;
+	for (k=0;k< Partida->tablero.alto;k++)
+		{aux2=malloc(Partida->tablero.ancho*sizeof(int));
+		if (aux2 != NULL)
+			Partida->tablero.matriz[k]=aux2;
+		}
+	}
 for(int x=0;x<10;x++)
 	for(int y=0; y<10;y++)
 		Partida->tablero.matriz[x][y]=0;
