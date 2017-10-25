@@ -1,6 +1,6 @@
 # Created by https://www.gitignore.io/api/c,assembler
 
-#Image Files
+### Image Files ###
 *.qcow2
 *.img
 *.vmdk
@@ -65,5 +65,11 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# End of https://www.gitignore.io/api/c,assembler
+#Custom scripts
+docker-build\.sh
+run\.bat
 
+#macOS
+*.DS_Store
+
+# End of https://www.gitignore.io/api/c,assembler
