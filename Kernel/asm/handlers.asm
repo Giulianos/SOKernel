@@ -9,7 +9,6 @@ global spuriousInt7Handler
 global spuriousInt15Handler
 extern inputB
 extern outputB
-extern ncPrintHex
 extern restoreKernelStack
 extern restoreProcessStack
 extern schedule
@@ -83,8 +82,6 @@ mouseHandler:
 
 systemCallHandler:
   pushaq
-  mov [0xB8000], byte 'K'
-  mov [0xB8002], byte 'S'
 
   mov qword [temp_rax], rax
   mov qword [temp_rbx], rbx
@@ -96,8 +93,8 @@ systemCallHandler:
   call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
   je .systemCallHandler_inKernel
-  mov rsp, rax:
 
+  mov rsp, rax
   mov r9, qword [temp_rdi]
   mov r8, qword [temp_rsi]
   mov rdx, qword [temp_rcx]
@@ -114,7 +111,6 @@ systemCallHandler:
   iretq
 
 .systemCallHandler_inKernel:
-
   mov r9, qword [temp_rdi]
   mov r8, qword [temp_rsi]
   mov rdx, qword [temp_rcx]
@@ -137,12 +133,12 @@ timerTickHandler:
   mov rsp, rax
 
   call schedule ;Ejecuta el algoritmo de scheduling (por ahora round robin quantum:1)
-  mov al, 0x20
-  out 0x20, al ;ACK al master pic
 
   mov rdi, rsp
 	call restoreProcessStack
 	mov rsp, rax
+  mov al, 0x20
+  out 0x20, al ;ACK al master pic
 	popaq
   iretq
 

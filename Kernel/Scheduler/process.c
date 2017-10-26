@@ -123,8 +123,6 @@ void schedule()
 	uint64_t i=current_pid;
 	uint8_t found=0;
 
-	ncNewline();
-
 	while(!found) {
 		i++;
 		if(i==MAX_PROCESS)

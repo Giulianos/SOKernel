@@ -21,8 +21,8 @@ void setIDTEntry(uint16_t entry, uint64_t offset)
 void configureInterrupts()
 {
   cli();
-  //1111 1111 1111 1000
-  writePICMask(0xFFF8); //Habilito solo las interrupciones de teclado, mouse y las spurious (7 y 15)
+  //0111 1111 0111 1000
+  writePICMask(0x7F78); //Habilito solo las interrupciones de teclado, mouse y las spurious (7 y 15)
   //initMouse();
   setIDTEntry(0x20, (uint64_t)timerTickHandler); //Handler del timertick
   setIDTEntry(0x21, (uint64_t)keyboardHandler); //Handler de la interrupcion de teclado
