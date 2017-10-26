@@ -33,20 +33,12 @@ pcb_t createProcess(uint8_t moduleid, uint64_t ppid)
 {
 	pcb_t newProc;
 
-	ncPrint("Creating process...");
 	newProc.pid = getNewPID();
-	ncNewline();
-	ncPrint("PID: ");
-	ncPrintDec(newProc.pid);
+
 	newProc.ppid = ppid;
 	newProc.code_page = allocatePage();
-	ncNewline();
-	ncPrint("Got a page for code at: ");
-	ncPrintHex(newProc.code_page);
+
 	newProc.stack = stackPageToAddr((uint64_t)allocatePage());
-	ncNewline();
-	ncPrint("Stack starts at: ");
-	ncPrintHex(newProc.stack);
 	newProc.stack = setupProcessStack(&newProc);
 	loadModule(moduleid, newProc.code_page);
 	return newProc;
@@ -73,8 +65,6 @@ void killProc(uint64_t pid)
 	freePage(processList[pid].pcb.stack);
 	processList[pid].empty=1;
 	schedule();
-	ncPrint("El proximo proceso en la cola es: ");
-	ncPrintDec(currentProc());
 	switchToProcess();
 }
 

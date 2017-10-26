@@ -17,8 +17,6 @@ extern schedule
 
 keyboardHandler:
   pushaq
-  mov [0xB8000], byte 'K'
-  mov [0xB8002], byte 'K'
   mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
   call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
@@ -49,8 +47,6 @@ keyboardHandler:
 
 mouseHandler:
   pushaq
-  mov [0xB8000], byte 'K'
-  mov [0xB8002], byte 'M'
   mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
   call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
@@ -66,7 +62,6 @@ mouseHandler:
 	call restoreProcessStack
 	mov rsp, rax
 	popaq
-  mov [0xB8000], byte 'U'
   iretq
 
 .mouseHandler_inKernel:
@@ -76,7 +71,6 @@ mouseHandler:
   out 0x20, al ;ACK al master pic
 
   popaq
-  mov [0xB8000], byte 'K'
   iretq
 ;--------------------------------------------------------------------------------------------------------
 
@@ -107,7 +101,6 @@ systemCallHandler:
 	call restoreProcessStack
 	mov rsp, rax
 	popaq
-  mov [0xB8000], byte 'U'
   iretq
 
 .systemCallHandler_inKernel:
