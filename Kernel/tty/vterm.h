@@ -3,6 +3,7 @@
 
   #include <stdlib.h>
   #include <stdint.h>
+  #include "../KeyboardDriver/driver.h"
 
   #define TTY_WIDTH 80
   #define TTY_HEIGHT 25
@@ -17,5 +18,5 @@
   void format_vterm(vterm_t vt, unsigned char format);
   void write_vterm(vterm_t vt, const char * buff, size_t count);
   void cpytext_vterm(vterm_t vt, void(*putchar)(char, uint8_t, uint8_t, uint8_t));
-
+  void keyPressed_vterm(vterm_t vt, keycode_t key);
 #endif

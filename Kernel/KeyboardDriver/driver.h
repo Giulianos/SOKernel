@@ -1,6 +1,8 @@
 #ifndef _KEYBOARD_DRIVER_H
 #define _KEYBOARD_DRIVER_H
 
+  #include <stdint.h>
+
   #define KBD_ACTION_PRESSED 0
   #define KBD_ACTION_RELEASED 1
 

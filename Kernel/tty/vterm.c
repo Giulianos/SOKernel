@@ -1,6 +1,10 @@
-#include "vterm.h"
 #include <stdlib.h>
 #include <lib.h>
+#include "vterm.h"
+#include "lockedQueue.h"
+#include "../Scheduler/process.h"
+#include "keyMapping.h"
+#include "buffer.h"
 
 typedef struct charattr
 {
@@ -14,6 +18,9 @@ typedef struct vterm_concrete
   charattr_t text[TTY_TEXTSIZE];
   int cursor;
   unsigned char format;
+  lockedQueue_t lockedQ;
+  char kbState;
+  kbBuffer_t kbBuffer;
 } vterm_concrete_t;
 
 typedef vterm_concrete_t * vterm_t;
@@ -35,6 +42,15 @@ vterm_t new_vterm()
     vterm->text[i].attr = TTY_DFLT_TXT_ATR;
   }
   vterm->cursor=0;
+  vterm->kbState=0;
+
+  //Buffer init
+  vterm->kbBuffer.f = 0;
+  vterm->kbBuffer.l = 0;
+
+  //lockedQueue init
+  vterm->lockedQ.f = 0;
+  vterm->lockedQ.l = 0;
 
   return vterm;
 }
@@ -51,6 +67,33 @@ void scroll_vterm(vterm_t vt)
     memcpy((void*)&(vt->text[i*TTY_WIDTH]), (void*)&(vt->text[(i+1)*TTY_WIDTH]), sizeof(charattr_t)*TTY_WIDTH);
   }
   vt->cursor-=TTY_WIDTH;
+}
+
+void keyPressed_vterm(vterm_t vt, keycode_t key)
+{
+  char ascii;
+  if(!updateState(key, &(vt->kbState)) && key.action == KBD_ACTION_PRESSED) {
+    ascii = getAscii(key, vt->kbState);
+    if(ascii == 0x8) {
+      if(bufferIsEmpty(&(vt->kbBuffer)))
+        return;
+      eraseChar_vterm(vt);
+      eraseFromBuffer(&(vt->kbBuffer));
+    }
+    else if(ascii == '\n') {
+      putchar_vterm(vt, ascii);
+    }
+    else {
+      putchar_vterm(vt, ascii);
+      putCharBuffer(&(vt->kbBuffer), ascii);
+    }
+  }
+}
+
+void eraseChar_vterm(vterm_t vt)
+{
+  vt->text[vt->cursor-1].c = ' ';
+  vt->cursor--;
 }
 
 void putchar_vterm(vterm_t vt, char c)
@@ -75,6 +118,17 @@ void write_vterm(vterm_t vt, const char * buff, size_t count)
   while(count--) {
     putchar_vterm(vt, *(buff++));
   }
+}
+
+void read_vterm(vterm_t vt, const char * buff, size_t count)
+{
+  lockedProcess_t aux;
+
+  aux.pid = currentProc();
+  aux.count = count;
+  aux.buffer = buff;
+  offerLockedProcess(&(vt->lockedQ), aux);
+  lockProcess(aux.pid);
 }
 
 void format_vterm(vterm_t vt, unsigned char format)

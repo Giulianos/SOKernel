@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <hardwareCom.h>
-#include "../Terminal/terminal.h"
+#include "../tty/tty.h"
 #include "driver.h"
 
 static uint8_t didOccurFirstInterrupt = 1;
@@ -23,13 +23,13 @@ void keyboardDriver()
       phase++;
     else
     {
-      terminalKeyboardUpdate(scancodeToKeycode(firstB, secondB));
+      keyPressed_tty(scancodeToKeycode(firstB, secondB));
     }
   }
   else
   {
     secondB = inputB(0x60);
     phase = 0;
-    terminalKeyboardUpdate(scancodeToKeycode(firstB, secondB));
+    keyPressed_tty(scancodeToKeycode(firstB, secondB));
   }
 }

@@ -8,7 +8,7 @@
 
 typedef struct {
 	pcb_t pcb;
-	uint8_t empty;
+	uint8_t state;
 } process_t;
 
 static uint64_t current_pid=0;
@@ -19,12 +19,22 @@ static uint8_t contextState = CTX_KERNEL_MODE;
 static uint64_t stackPageToAddr(uint64_t stackPage);
 static uint64_t setupProcessStack(pcb_t * process);
 
+void lockProcess(uint64_t pid)
+{
+	processList[pid].state = PROC_STATE_LOCKED;
+	schedule();
+}
+
+void unlockProcess(uint64_t pid)
+{
+	processList[pid].state = PROC_STATE_READY;
+}
 
 uint64_t getNewPID()
 {
 	uint64_t i;
 	for(i=0; i<MAX_PROCESS; i++) {
-		if(processList[i].empty)
+		if(processList[i].state == PROC_STATE_UNASSIGNED)
 			return i;
 	}
 }
@@ -45,15 +55,15 @@ pcb_t createProcess(uint8_t moduleid, uint64_t ppid)
 }
 
 void scheduleProcess(pcb_t process) {
-	processList[process.pid].empty=0;
-	processList[process.pid].pcb=process;
+	processList[process.pid].state = PROC_STATE_READY;
+	processList[process.pid].pcb = process;
 }
 
 void initializeScheduler() {
 	int i;
 
 	for(i=0; i<MAX_PROCESS; i++) {
-		processList[i].empty=1;
+		processList[i].state = PROC_STATE_UNASSIGNED;
 	}
 	current_pid=0;
 
@@ -63,7 +73,7 @@ void killProc(uint64_t pid)
 {
 	freePage(processList[pid].pcb.code_page);
 	freePage(processList[pid].pcb.stack);
-	processList[pid].empty=1;
+	processList[pid].state = PROC_STATE_UNASSIGNED;
 	schedule();
 	switchToProcess();
 }
@@ -117,7 +127,7 @@ void schedule()
 		i++;
 		if(i==MAX_PROCESS)
 			i=0;
-		if(!processList[i].empty)
+		if(processList[i].state == PROC_STATE_READY)
 			found=1;
 	}
 	current_pid=i;

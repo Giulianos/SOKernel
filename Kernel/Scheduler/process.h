@@ -5,6 +5,10 @@
 	#define MAX_PROCESS 100
 	#define CTX_KERNEL_MODE 1
 	#define CTX_USER_MODE 2
+	#define PROC_STATE_READY 0
+	#define PROC_STATE_LOCKED 1
+	#define PROC_STATE_UNASSIGNED 2
+
 
 	typedef struct
 	{
@@ -24,5 +28,7 @@
 	void scheduleProcess(pcb_t process);
 	void killProc(uint64_t pid);
 	uint64_t currentProc();
+	void lockProcess(uint64_t pid);
+	void unlockProcess(uint64_t pid);
 
 #endif

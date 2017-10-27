@@ -10,9 +10,6 @@ tomando informacion de:
 #include "driver.h"
 #include <naiveConsole.h>
 
-#include "../VideoDriver/driver.h" //Should be deleted
-#include "../Terminal/terminal.h"
-
 #define MOUSE_WAIT_READ   0x00
 #define MOUSE_WAIT_WRITE  0x01
 #define MOUSE_WAIT_TIMEOUT 10000 //Cantidad de iteraciones antes de abortar espera
@@ -86,7 +83,7 @@ void mouseDriver()
             mouseInfo.posY = mousePositionY;
             mouseInfo.rightPressed = (flags&0x02)?1:0;
             mouseInfo.leftPressed = (flags&0x01)?1:0;
-            terminalMouseUpdate(mouseInfo);
+            //terminalMouseUpdate(mouseInfo);
 
             /*//ncClear();
             videoPrint(" ", (uint8_t)(24-(mousePositionY*24)/349), (uint8_t)((mousePositionX*79)/999), LIGHT_BLUE_BG);
