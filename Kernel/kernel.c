@@ -47,20 +47,13 @@ int main()
 	pcb_t idleProc, aProc, bProc;
 
 	initializeScheduler();
-	configureInterrupts();
 	init_tty();
-	write_tty("Hola", 4);
-	while(1){
-	}
 	idleProc = createProcess(0, 0);
-	//scheduleProcess(idleProc);
+	scheduleProcess(idleProc);
 	aProc = createProcess(6, 0);
 	scheduleProcess(aProc);
-	bProc = createProcess(7, 0);
-	scheduleProcess(bProc);
 	schedule();
-	ncPrint("El proximo proceso en la cola es: ");
-	ncPrintDec(currentProc());
+	configureInterrupts();
 	switchToProcess();
 
 	while(1){

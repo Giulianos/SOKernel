@@ -27,6 +27,7 @@ typedef vterm_concrete_t * vterm_t;
 
 static void scroll_vterm(vterm_t vt);
 static void putchar_vterm(vterm_t vt, char c);
+static void dumpBuffer(vterm_t vt, char * dest);
 
 static int tty_last_id = 0;
 
@@ -72,6 +73,7 @@ void scroll_vterm(vterm_t vt)
 void keyPressed_vterm(vterm_t vt, keycode_t key)
 {
   char ascii;
+  lockedProcess_t p;
   if(!updateState(key, &(vt->kbState)) && key.action == KBD_ACTION_PRESSED) {
     ascii = getAscii(key, vt->kbState);
     if(ascii == 0x8) {
@@ -82,11 +84,22 @@ void keyPressed_vterm(vterm_t vt, keycode_t key)
     }
     else if(ascii == '\n') {
       putchar_vterm(vt, ascii);
+      putCharBuffer(&(vt->kbBuffer), ascii);
+      p = pollLockedProcess(&(vt->lockedQ));
+      dumpBuffer(vt, p.buffer);
+      unlockProcess(p.pid);
     }
     else {
       putchar_vterm(vt, ascii);
       putCharBuffer(&(vt->kbBuffer), ascii);
     }
+  }
+}
+
+void dumpBuffer(vterm_t vt, char * dest)
+{
+  while(!bufferIsEmpty(&(vt->kbBuffer))) {
+    *(dest++) = getCharBuffer(&(vt->kbBuffer));
   }
 }
 
