@@ -10,10 +10,13 @@ static void flip_tty();
 void init_tty()
 {
   int i = 0;
+  char vt_msg[] = "tty0\n";
 
   //Quantity of ttys = 7
   for(; i<7; i++) {
       vt[i] = new_vterm();
+      vt_msg[3] = '0' + i + 1;
+      write_vterm(vt[i], vt_msg, 5);
   }
   active_vt_id = 0;
 }
