@@ -54,9 +54,13 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 void * kalloc(size_t n)
 {
 	static void * page = 0;
-	if(!page)
+	void * ret;
+
+	if(!page) {
 		page = (void*)allocatePage();
-	void * ret = page;
+		allocatePage();
+	}
+	ret = page;
 	page += n;
 	return ret;
 }

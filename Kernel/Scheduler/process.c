@@ -39,13 +39,19 @@ uint64_t getNewPID()
 	}
 }
 
-pcb_t createProcess(uint8_t moduleid, uint64_t ppid)
+int getProcessVT(uint64_t pid)
+{
+	return processList[pid].pcb.vt_id;
+}
+
+pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id)
 {
 	pcb_t newProc;
 
 	newProc.pid = getNewPID();
 
 	newProc.ppid = ppid;
+	newProc.vt_id = vt_id;
 	newProc.code_page = allocatePage();
 
 	newProc.stack = stackPageToAddr((uint64_t)allocatePage());

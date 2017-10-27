@@ -17,13 +17,14 @@
 		uint64_t code_page;
 		uint64_t stack;
 		uint64_t kstack;
+		int vt_id;
 	} pcb_t;
 
 	uint64_t restoreProcessStack(uint64_t kstack);
 	uint64_t restoreKernelStack(uint64_t stack);
 	void schedule();
 	void initializeScheduler();
-	pcb_t createProcess(uint8_t moduleid, uint64_t ppid);
+	pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id);
 	void switchToProcess();
 	void scheduleProcess(pcb_t process);
 	void killProc(uint64_t pid);

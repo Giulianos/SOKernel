@@ -44,14 +44,12 @@ void * initializeKernelBinary()
 
 int main()
 {
-	pcb_t idleProc, aProc, bProc;
 
 	initializeScheduler();
 	init_tty();
-	idleProc = createProcess(0, 0);
-	scheduleProcess(idleProc);
-	aProc = createProcess(6, 0);
-	scheduleProcess(aProc);
+	scheduleProcess(createProcess(0, 0, 0)); //idle
+	scheduleProcess(createProcess(6, 0, 0));
+	scheduleProcess(createProcess(6, 0, 1));
 	schedule();
 	configureInterrupts();
 	switchToProcess();
