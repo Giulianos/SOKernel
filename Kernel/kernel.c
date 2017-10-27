@@ -8,6 +8,7 @@
 #include "PagingManager/paging.h"
 #include "Scheduler/process.h"
 #include "ModulesManager/modules.h"
+#include "tty/tty.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
