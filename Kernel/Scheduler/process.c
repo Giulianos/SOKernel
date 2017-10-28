@@ -51,7 +51,7 @@ pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id)
 	pcb_t newProc;
 
 	newProc.pid = getNewPID();
-
+	newProc.module_number = moduleid;
 	newProc.ppid = ppid;
 	newProc.vt_id = vt_id;
 	newProc.code_page = allocatePage();
@@ -107,6 +107,23 @@ void killProc(uint64_t pid)
 uint64_t currentProc()
 {
 	return current_pid;
+}
+
+int listProcs(process_info_t * procs)
+{
+	int i = 0, c = 0;
+	process_info_t aux;
+
+	for(; i < MAX_PROCESS; i++) {
+		if(processList[i].state != PROC_STATE_UNASSIGNED) {
+			c++;
+			aux.pid = processList[i].pcb.pid;
+			aux.tty = processList[i].pcb.vt_id + 1;
+			aux.module_number = processList[i].pcb.module_number;
+			procs[i] = aux;
+		}
+	}
+	return c;
 }
 
 //va al final de la pagina, el stack crece para arriba

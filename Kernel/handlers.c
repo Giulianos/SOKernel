@@ -14,7 +14,8 @@
 #define SYSCALL_TOGGLEVIDEO 0x45
 #define SYSCALL_VIDEODRAW 0x046
 #define SYSCALL_GETKEYSTATE 0x47
-#define SYSCALL_GIVEUPCPU 0x48
+#define SYSCALL_YIELD 0x48
+#define SYSCALL_PS 0x49
 
 void keyboardHandlerC()
 {
@@ -48,9 +49,11 @@ uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t 
     case SYSCALL_WAIT:
       waitProcess(currentProc(), rbx);
       break;
-    case SYSCALL_GIVEUPCPU:
+    case SYSCALL_YIELD:
       schedule();
       break;
+    case SYSCALL_PS:
+      return listProcs((process_info_t *)rbx);
     case SYSCALL_TOGGLEVIDEO:
       //Sin implementar
       break;
