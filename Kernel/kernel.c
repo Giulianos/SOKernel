@@ -4,7 +4,6 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <interrupts.h>
-#include "Terminal/terminal.h"
 #include "PagingManager/paging.h"
 #include "Scheduler/process.h"
 #include "ModulesManager/modules.h"
@@ -47,9 +46,16 @@ int main()
 
 	initializeScheduler();
 	init_tty();
-	scheduleProcess(createProcess(0, 0, 0)); //idle
-	scheduleProcess(createProcess(6, 0, 0));
-	scheduleProcess(createProcess(6, 0, 1));
+	//idle
+	scheduleProcess(createProcess(0, 0, 0));
+	//shells
+	scheduleProcess(createProcess(2, 0, 0));
+	scheduleProcess(createProcess(2, 0, 1));
+	scheduleProcess(createProcess(2, 0, 2));
+	scheduleProcess(createProcess(2, 0, 3));
+	scheduleProcess(createProcess(2, 0, 4));
+	scheduleProcess(createProcess(2, 0, 5));
+	scheduleProcess(createProcess(2, 0, 6));
 	schedule();
 	configureInterrupts();
 	switchToProcess();

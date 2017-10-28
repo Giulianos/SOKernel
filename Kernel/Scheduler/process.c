@@ -9,6 +9,8 @@
 typedef struct {
 	pcb_t pcb;
 	uint8_t state;
+	uint8_t isWaiting;
+	uint64_t waiting_pid;
 } process_t;
 
 static uint64_t current_pid=0;
@@ -62,6 +64,8 @@ pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id)
 
 void scheduleProcess(pcb_t process) {
 	processList[process.pid].state = PROC_STATE_READY;
+	processList[process.pid].isWaiting = 0;
+	processList[process.pid].waiting_pid = 0;
 	processList[process.pid].pcb = process;
 }
 
@@ -70,13 +74,29 @@ void initializeScheduler() {
 
 	for(i=0; i<MAX_PROCESS; i++) {
 		processList[i].state = PROC_STATE_UNASSIGNED;
+		processList[i].isWaiting = 0;
+		processList[i].waiting_pid = 0;
 	}
 	current_pid=0;
 
 }
 
+void waitProcess(uint64_t waiter, uint64_t pid)
+{
+	processList[waiter].isWaiting = 1;
+	processList[waiter].waiting_pid = pid;
+	lockProcess(waiter);
+}
+
 void killProc(uint64_t pid)
 {
+	uint64_t ppid = processList[pid].pcb.ppid;
+
+	if(processList[ppid].isWaiting && processList[ppid].waiting_pid == pid) {
+		processList[ppid].isWaiting = 0;
+		processList[ppid].waiting_pid = 0;
+		unlockProcess(ppid);
+	}
 	freePage(processList[pid].pcb.code_page);
 	freePage(processList[pid].pcb.stack);
 	processList[pid].state = PROC_STATE_UNASSIGNED;

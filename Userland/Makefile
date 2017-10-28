@@ -1,39 +1,29 @@
 include Makefile.inc
 
-all: sampleCodeModule idleModule helpModule fortuneModule clearModule snakeModule aModule bModule
+all: idle init sh help ps
 
-idleModule:
-		cd idleModule; make
+idle:
+	cd idle; make
 
-helpModule:
-		cd helpModule; make
+init:
+	cd init; make
 
-clearModule:
-		cd clearModule; make
+sh:
+	cd sh; make
 
-fortuneModule:
-		cd fortuneModule; make
+help:
+	cd help; make
 
-sampleCodeModule:
-	cd SampleCodeModule; make
-
-snakeModule:
-	cd snakeModule; make
-
-aModule:
-	cd aModule; make
-
-bModule:
-	cd bModule; make
+ps:
+	cd ps; make
 
 clean:
-	cd SampleCodeModule; make clean
-	cd helpModule; make clean
-	cd idleModule; make clean
-	cd snakeModule; make clean
-	cd aModule; make clean
-	cd bModule; make clean
+	cd idle; make clean
+	cd init; make clean
+	cd sh; make clean
+	cd help; make clean
+	cd ps; make clean
 	rm -rf *.bin
 
 
-.PHONY: idleModule sampleCodeModule helpModule all clean fortuneModule clearModule snakeModule aModule bModule
+.PHONY: all clean idle init sh help ps

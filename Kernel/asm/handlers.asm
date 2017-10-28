@@ -96,11 +96,13 @@ systemCallHandler:
   mov rdi, qword [temp_rax]
   mov rsi, qword [temp_rbx]
   call terminalSysCallHandler ; terminalSysCallHandler(rax,rbx,rcx,rdx,rsi,rdi)
+  mov qword [temp_rax], rax ;Me guardo el retorno para devolverlo despues
 
   mov rdi, rsp
 	call restoreProcessStack
 	mov rsp, rax
 	popaq
+  mov rax, qword [temp_rax] ;Piso rax con el valor devuelto por la syscall
   iretq
 
 .systemCallHandler_inKernel:
@@ -111,8 +113,10 @@ systemCallHandler:
   mov rdi, qword [temp_rax]
   mov rsi, qword [temp_rbx]
   call terminalSysCallHandler ; terminalSysCallHandler(rax,rbx,rcx,rdx,rsi,rdi)
+  mov qword [temp_rax], rax
 
   popaq
+  mov rax, qword [temp_rax]
   iretq
 ;--------------------------------------------------------------------------------------------------------
 

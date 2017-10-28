@@ -31,5 +31,8 @@
 	uint64_t currentProc();
 	void lockProcess(uint64_t pid);
 	void unlockProcess(uint64_t pid);
+	int getProcessVT(uint64_t pid);
+	void waitProcess(uint64_t waiter, uint64_t pid);
+
 
 #endif
