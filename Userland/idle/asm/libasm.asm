@@ -1,4 +1,5 @@
 global systemCall
+global halt
 
 ; uint64_t systemCall(eax, ebx, ecx, edx, esi, edi)
 systemCall:
@@ -16,4 +17,8 @@ systemCall:
 
   mov rsp, rbp
   pop rbp
+  ret
+
+halt:
+  hlt
   ret
