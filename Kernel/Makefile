@@ -44,5 +44,16 @@ $(LOADEROBJECT):
 
 clean:
 	rm -rf asm/*.o *.o *.bin
+	rm -rf $(OBJ)
+	rm -rf $(OBJ_ASM)
+	rm -rf $(OBJ_KEYBOARD_DRIVER)
+	rm -rf $(OBJ_MOUSE_DRIVER)
+	rm -rf $(OBJ_VIDEO_DRIVER)
+	rm -rf $(OBJ_PAGING_MANAGER)
+	rm -rf $(OBJ_MODULES_MANAGER)
+	rm -rf $(OBJ_PAGE_ALLOCATOR)
+	rm -rf $(OBJ_SCHEDULER)
+	rm -rf $(OBJ_TTY)
+	rm -rf $(OBJ_SYSCALLS)
 
 .PHONY: all clean

@@ -2,9 +2,15 @@
 #define PROCESS_H
 
 	#include <stdint.h>
+
 	#define MAX_PROCESS 100
+	#define MAX_ALLOCATED_PAGES 20
+
+	#define PROCESS_HEAP_BASE 0x20000000
+
 	#define CTX_KERNEL_MODE 1
 	#define CTX_USER_MODE 2
+
 	#define PROC_STATE_READY 0
 	#define PROC_STATE_LOCKED 1
 	#define PROC_STATE_UNASSIGNED 2
@@ -16,6 +22,8 @@
 		uint64_t code_page;
 		uint64_t stack;
 		uint64_t kstack;
+		void * allocated_pages[MAX_ALLOCATED_PAGES];
+		int allocated_pages_quantity;
 		char module_number;
 		int vt_id;
 	} pcb_t;

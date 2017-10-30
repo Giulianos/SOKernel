@@ -31,6 +31,8 @@ uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t 
       return (uint64_t)syscall_yield();
     case SYSCALL_PS:
       return (uint64_t)syscall_ps((process_info_t *)rbx);
+    case SYSCALL_SBRK:
+      return (uint64_t)syscall_sbrk();
     case SYSCALL_TOGGLEVIDEO:
       //Sin implementar
       break;

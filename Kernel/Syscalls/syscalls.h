@@ -11,6 +11,7 @@
   #define SYSCALL_WAIT 0x07
   #define SYSCALL_EXECVE 0x0B
   #define SYSCALL_CLEAR 0x44
+  #define SYSCALL_SBRK 0x2D
   #define SYSCALL_TOGGLEVIDEO 0x45
   #define SYSCALL_VIDEODRAW 0x046
   #define SYSCALL_GETKEYSTATE 0x47
@@ -18,6 +19,7 @@
   #define SYSCALL_PS 0x49
 
   uint64_t syscall_execve(int module_number);
+  void * syscall_sbrk();
   int syscall_ps(process_info_t * procs);
   int syscall_exit();
   int syscall_read(int fd, char * buff, size_t count);
