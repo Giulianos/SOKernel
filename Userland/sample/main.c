@@ -15,14 +15,19 @@ int main()
 {
 	void * heap;
 	uint64_t * num;
+	int i=0;
 
 	init_printf(0, putc);
-	printf("Soy sample! Voy a pedir una pagina...\n");
-	heap = (void *)systemCall(0x2d, 0, 0, 0, 0, 0);
-	printf("Tengo una pagina en %x, voy a intentar escribir 0xC0FFEE...\n", heap);
-	num = (uint64_t *)heap;
-	*num = 0xC0FFEE;
-	printf("Leo heap: %x\n", *num);
+	printf("Soy sample! Voy a pedir todas las paginas que pueda...\n");
+	do {
+		heap = (void *)systemCall(0x2d, 0, 0, 0, 0, 0);
+		if(!heap)
+			break;
+		printf("Tengo una pagina en %x (voy %d paginas obtenidas), voy a intentar escribir 0xC0FFEE...\n", heap, ++i);
+		num = (uint64_t *)heap;
+		*num = 0xC0FFEE;
+		printf("Leo heap: %x\n", *num);
+	} while(heap);
 
 	return 0;
 }

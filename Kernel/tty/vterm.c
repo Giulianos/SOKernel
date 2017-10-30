@@ -64,8 +64,13 @@ void free_vterm(vterm_t vt)
 void scroll_vterm(vterm_t vt)
 {
   int i=0;
+  //Move everything one line up
   for(; i<TTY_HEIGHT-1; i++) {
     memcpy((void*)&(vt->text[i*TTY_WIDTH]), (void*)&(vt->text[(i+1)*TTY_WIDTH]), sizeof(charattr_t)*TTY_WIDTH);
+  }
+  //Clean the last line
+  for(i=TTY_WIDTH*(TTY_HEIGHT-1); i<TTY_TEXTSIZE; i++) {
+    vt->text[i].c = ' ';
   }
   vt->cursor-=TTY_WIDTH;
 }
