@@ -37,12 +37,21 @@ char parse_command(char * input)
 		wait(child_pid);
 		return 1;
 	}
+	if(strcmp(input, "sample") == 0) {
+		child_pid = execve(5);
+		wait(child_pid);
+		return 1;
+	}
 	if(strcmp(input, "help&") == 0) {
 		child_pid = execve(3);
 		return 1;
 	}
 	if(strcmp(input, "ps&") == 0) {
 		child_pid = execve(4);
+		return 1;
+	}
+	if(strcmp(input, "sample&") == 0) {
+		child_pid = execve(5);
 		return 1;
 	}
 

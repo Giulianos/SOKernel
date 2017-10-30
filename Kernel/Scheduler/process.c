@@ -27,6 +27,24 @@ void lockProcess(uint64_t pid)
 	schedule();
 }
 
+void * assignAllocatedPage(uint64_t pid, void * page)
+{
+	int allocated_pages_quantity = processList[pid].pcb.allocated_pages_quantity;
+	void * retPage = (void *)(PROCESS_HEAP_BASE+allocated_pages_quantity*0x200000);
+
+	if(allocated_pages_quantity>=MAX_ALLOCATED_PAGES) {
+		return 0;
+	}
+
+	processList[pid].pcb.allocated_pages[allocated_pages_quantity] = page;
+
+	mapPhysical((uint64_t)retPage ,page);
+
+	processList[pid].pcb.allocated_pages_quantity++;
+
+	return retPage;
+}
+
 void unlockProcess(uint64_t pid)
 {
 	processList[pid].state = PROC_STATE_READY;
@@ -55,7 +73,7 @@ pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id)
 	newProc.ppid = ppid;
 	newProc.vt_id = vt_id;
 	newProc.code_page = allocatePage();
-
+	newProc.allocated_pages_quantity = 0;
 	newProc.stack = stackPageToAddr((uint64_t)allocatePage());
 	newProc.stack = setupProcessStack(&newProc);
 	loadModule(moduleid, newProc.code_page);

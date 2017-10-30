@@ -8,7 +8,8 @@ VMDK=$(OSIMAGENAME).vmdk
 QCOW2=$(OSIMAGENAME).qcow2
 IMG=$(OSIMAGENAME).img
 KERNEL=../Kernel/kernel.bin
-USERLAND=../Userland/0000-idle.bin ../Userland/0001-init.bin ../Userland/0002-sh.bin ../Userland/0003-help.bin ../Userland/0004-ps.bin
+USERLAND=$(shell find ../Userland/ -type f -name '*.bin')
+#USERLAND=../Userland/0000-idle.bin ../Userland/0001-init.bin ../Userland/0002-sh.bin ../Userland/0003-help.bin ../Userland/0004-ps.bin
 PACKEDKERNEL=packedKernel.bin
 IMGSIZE=6291456
 
