@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdlib.h>
+#include "PageAllocator/pageAllocator.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -47,4 +49,23 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	}
 
 	return destination;
+}
+
+void * kalloc(size_t n)
+{
+	static void * page = 0;
+	void * ret;
+
+	if(!page) {
+		page = (void*)allocatePage();
+		allocatePage();
+	}
+	ret = page;
+	page += n;
+	return ret;
+}
+
+void free(void * ptr)
+{
+
 }

@@ -17,6 +17,11 @@ uint64_t allocateSinglePage()
   }
 }
 
+uint64_t pageSize()
+{
+	return PAGE_SIZE * 0x100000;
+}
+
 uint64_t allocatePage()
 {
   static uint8_t allocate = 1;

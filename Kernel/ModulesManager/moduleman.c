@@ -90,11 +90,14 @@ void loadModuleToKernel(uint8_t ** module, uint8_t ** targetModuleAddress, uint8
   *targetModuleAddress += moduleSize;
 }
 
-void loadModuleToRun(uint8_t id)
+void loadModule(uint8_t id, uint64_t text_section)
 {
-	runtimePage = (uint8_t *)allocatePage();
-	mapUserspace(runtimePage);
-  memcpy(runtimePage, modules[id].dir, modules[id].size);
+  ncNewline();
+	ncPrint("Loading module ");
+  ncPrintDec(id);
+  ncPrint(" at ");
+	ncPrintHex(text_section);
+  memcpy((void *)text_section, modules[id].dir, modules[id].size);
 }
 
 void runLoadedModule()

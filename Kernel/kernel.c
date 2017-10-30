@@ -4,9 +4,10 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <interrupts.h>
-#include "Terminal/terminal.h"
 #include "PagingManager/paging.h"
+#include "Scheduler/process.h"
 #include "ModulesManager/modules.h"
+#include "tty/tty.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -42,13 +43,22 @@ void * initializeKernelBinary()
 
 int main()
 {
-	//mapUserspace();
-	configureInterrupts();
-	terminalInit();
 
-	//Run shell
-	loadModuleToRun(0);
-	runLoadedModule();
+	initializeScheduler();
+	init_tty();
+	//idle
+	scheduleProcess(createProcess(0, 0, 0));
+	//shells
+	scheduleProcess(createProcess(2, 0, 0));
+	scheduleProcess(createProcess(2, 0, 1));
+	scheduleProcess(createProcess(2, 0, 2));
+	scheduleProcess(createProcess(2, 0, 3));
+	scheduleProcess(createProcess(2, 0, 4));
+	scheduleProcess(createProcess(2, 0, 5));
+	scheduleProcess(createProcess(2, 0, 6));
+	schedule();
+	configureInterrupts();
+	switchToProcess();
 
 	while(1){
 	}

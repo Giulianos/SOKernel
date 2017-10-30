@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include "driver.h"
 
 keycode_t scancodeToKeycode(uint8_t fbyte, uint8_t sbyte)

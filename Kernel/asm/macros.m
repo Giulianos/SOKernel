@@ -34,3 +34,17 @@
 	pop rbx
 	pop rax
 %endmacro
+
+%macro ctxswitchkernel 0
+	pushaq
+	mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
+	call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
+	mov rsp, rax
+%endmacro
+
+%macro ctxswitchuser 0
+	mov rdi, rsp
+	call restoreProcessStack
+	mov rsp, rax
+	popaq
+%endmacro

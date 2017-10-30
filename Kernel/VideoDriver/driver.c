@@ -29,3 +29,8 @@ void setVideoBuffer(uint8_t * vbuffer)
     *position = *(vbuffer++);
   }
 }
+
+void * get_vbuffer_base()
+{
+  return (void *)screenBuffer;
+}

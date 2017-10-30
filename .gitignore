@@ -73,3 +73,7 @@ run\.bat
 *.DS_Store
 
 # End of https://www.gitignore.io/api/c,assembler
+
+
+docker-build\.sh
+run\.bat

@@ -1,6 +1,7 @@
 #ifndef _HANDLERS_H
 #define _HANDLERS_H
 
+  void timerTickHandler();
   void keyboardHandler();
   void mouseHandler();
   void systemCallHandler();
