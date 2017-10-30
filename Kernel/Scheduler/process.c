@@ -115,8 +115,7 @@ void killProc(uint64_t pid)
 		processList[ppid].waiting_pid = 0;
 		unlockProcess(ppid);
 	}
-	freePage(processList[pid].pcb.code_page);
-	freePage(processList[pid].pcb.stack);
+	freeProcPages();
 	processList[pid].state = PROC_STATE_UNASSIGNED;
 	schedule();
 	switchToProcess();
@@ -192,7 +191,30 @@ void schedule()
 			found=1;
 	}
 	current_pid=i;
+	mapProcPages();
+}
+
+void mapProcPages()
+{
+	int i=0;
+
 	mapProcess(processList[current_pid].pcb.code_page);
+
+	for(; i<processList[current_pid].pcb.allocated_pages_quantity; i++) {
+		mapPhysical(PROCESS_HEAP_BASE+i*0x200000, processList[current_pid].pcb.allocated_pages[i]);
+	}
+}
+
+void freeProcPages()
+{
+	int i=0;
+
+	freePage(processList[current_pid].pcb.code_page);
+	freePage(processList[current_pid].pcb.stack);
+
+	for(; i<processList[current_pid].pcb.allocated_pages_quantity; i++) {
+		freePage(processList[current_pid].pcb.allocated_pages[i]);
+	}
 }
 
 uint64_t restoreProcessStack(uint64_t kstack)
