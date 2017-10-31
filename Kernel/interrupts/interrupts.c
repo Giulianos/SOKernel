@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <lib.h>
 #include "interrupts.h"
 
 #define PIC_MASTER_CMD 0x20
@@ -9,6 +8,8 @@
 
 extern void outputB(uint16_t reg, uint8_t data);
 extern uint8_t inputB(uint16_t reg);
+extern void sti();
+extern void cli();
 
 /* -- Handlers prototypes -- */
 extern void timerTickHandler();

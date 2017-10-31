@@ -3,7 +3,6 @@
 #include "../PagingManager/paging.h"
 #include "../PageAllocator/pageAllocator.h"
 #include "trapStackFrame.h"
-#include <naiveConsole.h>
 #include <lib.h>
 
 typedef struct {

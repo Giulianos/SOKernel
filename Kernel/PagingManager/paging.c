@@ -4,6 +4,8 @@
 
 #define USERLAND_LOGIC_PAGE 0x1FE00000
 
+extern void reloadCR3();
+
 typedef uint64_t PDEntry_t;
 
 PDEntry_t * PDAddr = (PDEntry_t *)0x10000;

@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <lib.h>
-#include <moduleLoader.h>
 #include "interrupts/interrupts.h"
 #include "PagingManager/paging.h"
 #include "Scheduler/process.h"

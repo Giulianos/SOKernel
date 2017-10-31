@@ -7,7 +7,6 @@ tomando informacion de:
 */
 
 #include "driver.h"
-#include <naiveConsole.h>
 
 #define MOUSE_WAIT_READ   0x00
 #define MOUSE_WAIT_WRITE  0x01
