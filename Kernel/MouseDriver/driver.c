@@ -6,7 +6,6 @@ tomando informacion de:
   - http://forum.osdev.org/viewtopic.php?t=10247
 */
 
-#include <hardwareCom.h>
 #include "driver.h"
 #include <naiveConsole.h>
 
@@ -22,6 +21,8 @@ static uint8_t didOccurFirsrInterrupt = 0;
 static void mouseWait(uint8_t bit);
 static uint8_t mouseRead();
 static void mouseWrite(uint8_t data);
+extern void outputB(uint16_t reg, uint8_t data);
+extern uint8_t inputB(uint16_t reg);
 
 //Comandos del mouse: http://wiki.osdev.org/Mouse_Input#Useful_Mouse_Command_Set
 

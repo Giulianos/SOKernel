@@ -1,19 +1,6 @@
-#include <handlers.h>
-#include "KeyboardDriver/driver.h"
-#include "MouseDriver/driver.h"
-#include "Syscalls/syscalls.h"
+#include "syscalls.h"
 
-void keyboardHandlerC()
-{
-  keyboardDriver();
-}
-
-void mouseHandlerC()
-{
-  mouseDriver();
-}
-
-uint64_t terminalSysCallHandler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uint64_t rsi,uint64_t rdi)
+uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uint64_t rsi,uint64_t rdi)
 {
   switch(rax)
   {

@@ -1,7 +1,9 @@
 #include <stdint.h>
-#include <hardwareCom.h>
 #include "../tty/tty.h"
 #include "driver.h"
+
+extern void outputB(uint16_t reg, uint8_t data);
+extern uint8_t inputB(uint16_t reg);
 
 static uint8_t didOccurFirstInterrupt = 1;
 
