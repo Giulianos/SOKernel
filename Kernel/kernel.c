@@ -3,6 +3,7 @@
 #include <lib.h>
 #include "interrupts/interrupts.h"
 #include "PagingManager/paging.h"
+#include "PageAllocator/pageAllocator.h"
 #include "Scheduler/process.h"
 #include "ModulesManager/modules.h"
 #include "tty/tty.h"
@@ -21,7 +22,7 @@ void clearBSS(void * bssAddress, uint64_t bssSize)
 
 void * getStackBase()
 {
-	return allocatePage() + pageSize() - sizeof(uint64_t);
+	return (void *)((char *)allocatePage() + pageSize() - sizeof(uint64_t));
 }
 
 void * initializeKernelBinary()

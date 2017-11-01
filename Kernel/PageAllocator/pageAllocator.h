@@ -10,9 +10,9 @@
 #define LAST_KERNEL_PAGE 9
 
 
-uint64_t allocatePage();
-uint64_t allocateSinglePage();
-uint64_t pageSize();
-void freePage(uint64_t pageAddress);
+void * allocatePage();
+void * allocateSinglePage();
+unsigned long long pageSize();
+void freePage(void * pageAddress);
 
 #endif

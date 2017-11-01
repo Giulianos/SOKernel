@@ -19,7 +19,7 @@ typedef struct vterm_concrete
   int cursor;
   unsigned char format;
   lockedQueue_t lockedQ;
-  char kbState;
+  unsigned char kbState;
   kbBuffer_t kbBuffer;
 } vterm_concrete_t;
 
@@ -28,6 +28,7 @@ typedef vterm_concrete_t * vterm_t;
 static void scroll_vterm(vterm_t vt);
 static void putchar_vterm(vterm_t vt, char c);
 static void dumpBuffer(vterm_t vt, char * dest);
+static void eraseChar_vterm(vterm_t vt);
 
 static int tty_last_id = 0;
 
@@ -138,7 +139,7 @@ void write_vterm(vterm_t vt, const char * buff, size_t count)
   }
 }
 
-void read_vterm(vterm_t vt, const char * buff, size_t count)
+void read_vterm(vterm_t vt, char * buff, size_t count)
 {
   lockedProcess_t aux;
 

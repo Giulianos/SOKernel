@@ -21,7 +21,7 @@ int main()
 	init_printf(0, putc);
 
 	//Obtenemos los procesos con la syscall ps (0x49)
-	quantity = systemCall(0x49, procs, 0, 0, 0, 0);
+	quantity = systemCall(0x49, (uint64_t)procs, 0, 0, 0, 0);
 
 	printf("PID TTY  CMD\n");
 	//Itermamos los procesos
