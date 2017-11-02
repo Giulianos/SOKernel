@@ -4,11 +4,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-void * memset(void * destination, int32_t character, uint64_t length);
-void * memcpy(void * destination, const void * source, uint64_t length);
+void * k_memset(void * destination, int32_t character, uint64_t length);
+void * k_memcpy(void * destination, const void * source, uint64_t length);
+void * k_malloc(size_t n);
+void k_free(void * ptr);
+void k_log(char *fmt, ...);
 
-char *cpuVendor(char *result);
-void * kalloc(size_t n);
-void free(void * ptr);
+char * cpuVendor(char *result);
 
 #endif

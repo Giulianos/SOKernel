@@ -70,14 +70,14 @@ void loadModuleToKernel(void ** module, void ** targetModuleAddress, uint8_t mod
   modules[moduleNum].id = moduleNum;
   modules[moduleNum].dir = *targetModuleAddress;
   modules[moduleNum].size = moduleSize;
-	memcpy(*targetModuleAddress, *module, moduleSize);
+	k_memcpy(*targetModuleAddress, *module, moduleSize);
 	*module += moduleSize;
   *targetModuleAddress += moduleSize;
 }
 
 void loadModule(uint8_t id, void * text_section)
 {
-  memcpy((void *)text_section, modules[id].dir, modules[id].size);
+  k_memcpy((void *)text_section, modules[id].dir, modules[id].size);
 }
 
 void runLoadedModule()

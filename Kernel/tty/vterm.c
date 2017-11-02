@@ -35,7 +35,7 @@ static int tty_last_id = 0;
 vterm_t new_vterm()
 {
   int i=0;
-  vterm_t vterm = kalloc(sizeof(vterm_concrete_t));
+  vterm_t vterm = k_malloc(sizeof(vterm_concrete_t));
 
   vterm->id=tty_last_id++;
   vterm->format = TTY_DFLT_TXT_ATR;
@@ -59,7 +59,7 @@ vterm_t new_vterm()
 
 void free_vterm(vterm_t vt)
 {
-  free(vt);
+  k_free(vt);
 }
 
 void scroll_vterm(vterm_t vt)
@@ -67,7 +67,7 @@ void scroll_vterm(vterm_t vt)
   int i=0;
   //Move everything one line up
   for(; i<TTY_HEIGHT-1; i++) {
-    memcpy((void*)&(vt->text[i*TTY_WIDTH]), (void*)&(vt->text[(i+1)*TTY_WIDTH]), sizeof(charattr_t)*TTY_WIDTH);
+    k_memcpy((void*)&(vt->text[i*TTY_WIDTH]), (void*)&(vt->text[(i+1)*TTY_WIDTH]), sizeof(charattr_t)*TTY_WIDTH);
   }
   //Clean the last line
   for(i=TTY_WIDTH*(TTY_HEIGHT-1); i<TTY_TEXTSIZE; i++) {

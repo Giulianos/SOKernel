@@ -1,8 +1,6 @@
 #include <stdint.h>
-#include <stdlib.h>
-#include "PageAllocator/pageAllocator.h"
 
-void * memset(void * destination, int32_t c, uint64_t length)
+void * k_memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
@@ -13,10 +11,10 @@ void * memset(void * destination, int32_t c, uint64_t length)
 	return destination;
 }
 
-void * memcpy(void * destination, const void * source, uint64_t length)
+void * k_memcpy(void * destination, const void * source, uint64_t length)
 {
 	/*
-	* memcpy does not support overlapping buffers, so always do it
+	* k_memcpy does not support overlapping buffers, so always do it
 	* forwards. (Don't change this without adjusting memmove.)
 	*
 	* For speedy copying, optimize the common case where both pointers
@@ -49,23 +47,4 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	}
 
 	return destination;
-}
-
-void * kalloc(size_t n)
-{
-	static void * page = 0;
-	void * ret;
-
-	if(!page) {
-		page = (void*)allocatePage();
-		allocatePage();
-	}
-	ret = page;
-	page += n;
-	return ret;
-}
-
-void free(void * ptr)
-{
-
 }

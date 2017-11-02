@@ -17,7 +17,7 @@ extern uint8_t endOfKernel;
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
-	memset(bssAddress, 0, bssSize);
+	k_memset(bssAddress, 0, bssSize);
 }
 
 void * getStackBase()
@@ -34,19 +34,18 @@ void * initializeKernelBinary()
 
 int main()
 {
-
+	int i=0;
+	pcb_t aux_proc;
 	initializeScheduler();
 	init_tty();
-	//idle
+	k_log("Creating idle process...\n");
 	scheduleProcess(createProcess(0, 0, 0));
-	//shells
-	scheduleProcess(createProcess(2, 0, 0));
-	scheduleProcess(createProcess(2, 0, 1));
-	scheduleProcess(createProcess(2, 0, 2));
-	scheduleProcess(createProcess(2, 0, 3));
-	scheduleProcess(createProcess(2, 0, 4));
-	scheduleProcess(createProcess(2, 0, 5));
-	scheduleProcess(createProcess(2, 0, 6));
+	k_log("Creating shells...\n");
+	for(;i<7; i++) {
+		aux_proc = createProcess(2, 0, i);
+		k_log(" sh for tty%d has pid %d\n", i+1, aux_proc.pid);
+		scheduleProcess(aux_proc);
+	}
 	schedule();
 	configureInterrupts();
 	switchToProcess();
