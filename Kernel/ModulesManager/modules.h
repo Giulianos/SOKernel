@@ -11,7 +11,7 @@ typedef struct
 } module_t;
 
 void loadModulesToKernel();
-void loadModule(uint8_t id, uint64_t text_section);
+void loadModule(uint8_t id, void * text_section);
 void runLoadedModule();
 uint8_t getModulesQuantity();
 module_t * getModules();

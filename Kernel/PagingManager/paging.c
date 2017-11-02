@@ -4,26 +4,28 @@
 
 #define USERLAND_LOGIC_PAGE 0x1FE00000
 
+extern void reloadCR3();
+
 typedef uint64_t PDEntry_t;
 
 PDEntry_t * PDAddr = (PDEntry_t *)0x10000;
 uint64_t userlandPhysicalPage = 10;
 
-void mapProcess(uint64_t pageAddr)
+void mapProcess(void * pageAddr)
 {
-  mapPhysical(USERLAND_LOGIC_PAGE, pageAddr);
+  mapPhysical((void *)USERLAND_LOGIC_PAGE, pageAddr);
 }
 
-void mapPhysical(uint64_t logic, uint64_t physical)
+void mapPhysical(void * logic, void * physical)
 {
-  uint64_t logicPageNum = logic/0x200000;
-  uint64_t physicalPageNum = physical/0x200000;
+  unsigned long logicPageNum = (unsigned long)((unsigned long)logic/0x200000);
+  unsigned long physicalPageNum = (unsigned long)((unsigned long)physical/0x200000);
 
   PDAddr[logicPageNum] = PDAddr[physicalPageNum];
 	reloadCR3();
 }
 
-uint64_t getLogicalUserlandPage()
+void * getLogicalUserlandPage()
 {
-	return USERLAND_LOGIC_PAGE;
+	return (void *)USERLAND_LOGIC_PAGE;
 }

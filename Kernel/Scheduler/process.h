@@ -19,9 +19,9 @@
 	typedef struct {
 		uint64_t pid;
 		uint64_t ppid;
-		uint64_t code_page;
-		uint64_t stack;
-		uint64_t kstack;
+		void * code_page;
+		void * stack;
+		void * kstack;
 		void * allocated_pages[MAX_ALLOCATED_PAGES];
 		int allocated_pages_quantity;
 		char module_number;
@@ -34,8 +34,8 @@
 		char module_number;
 	} process_info_t;
 
-	uint64_t restoreProcessStack(uint64_t kstack);
-	uint64_t restoreKernelStack(uint64_t stack);
+	void * restoreProcessStack(void * kstack);
+	void * restoreKernelStack(void * stack);
 	void schedule();
 	void initializeScheduler();
 	pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id);
@@ -48,6 +48,7 @@
 	int getProcessVT(uint64_t pid);
 	void waitProcess(uint64_t waiter, uint64_t pid);
 	int listProcs(process_info_t * procs);
+	void * assignAllocatedPage(uint64_t pid, void * page);
 
 
 #endif

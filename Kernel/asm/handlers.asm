@@ -1,10 +1,10 @@
 global timerTickHandler
 global keyboardHandler
-extern keyboardHandlerC
+extern keyboardDriver
 global mouseHandler
-extern mouseHandlerC
+extern mouseDriver
 global systemCallHandler
-extern terminalSysCallHandler
+extern syscall_handler
 global spuriousInt7Handler
 global spuriousInt15Handler
 extern inputB
@@ -23,7 +23,7 @@ keyboardHandler:
   je .keyboardHandler_inKernel
   mov rsp, rax
 
-  call keyboardHandlerC
+  call keyboardDriver
   mov al, 0x20
   out 0x20, al ;ACK al master pic
 
@@ -36,7 +36,7 @@ keyboardHandler:
 
 .keyboardHandler_inKernel:
 
-  call keyboardHandlerC
+  call keyboardDriver
   mov al, 0x20
   out 0x20, al ;ACK al master pic
 
@@ -53,7 +53,7 @@ mouseHandler:
   je .mouseHandler_inKernel
   mov rsp, rax
 
-  call mouseHandlerC
+  call mouseDriver
   mov al, 0x20
   out 0x20, al ;ACK al master pic
   out 0xA0, al
@@ -66,7 +66,7 @@ mouseHandler:
 
 .mouseHandler_inKernel:
 
-  call keyboardHandlerC
+  call keyboardDriver
   mov al, 0x20
   out 0x20, al ;ACK al master pic
 
@@ -95,7 +95,7 @@ systemCallHandler:
   mov rcx, qword [temp_rdx]
   mov rdi, qword [temp_rax]
   mov rsi, qword [temp_rbx]
-  call terminalSysCallHandler ; terminalSysCallHandler(rax,rbx,rcx,rdx,rsi,rdi)
+  call syscall_handler ; syscall_handler(rax,rbx,rcx,rdx,rsi,rdi)
   mov qword [temp_rax], rax ;Me guardo el retorno para devolverlo despues
 
   mov rdi, rsp
@@ -112,7 +112,7 @@ systemCallHandler:
   mov rcx, qword [temp_rdx]
   mov rdi, qword [temp_rax]
   mov rsi, qword [temp_rbx]
-  call terminalSysCallHandler ; terminalSysCallHandler(rax,rbx,rcx,rdx,rsi,rdi)
+  call syscall_handler ; syscall_handler(rax,rbx,rcx,rdx,rsi,rdi)
   mov qword [temp_rax], rax
 
   popaq

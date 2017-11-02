@@ -1,6 +1,7 @@
 #include "../VideoDriver/driver.h"
 #include "vterm.h"
 #include "tty.h"
+#include "../Scheduler/process.h"
 
 static vterm_t vt[7];
 static int active_vt_id = 0;
@@ -28,14 +29,14 @@ void write_tty(const char * buff, size_t count)
     flip_tty(); //solo se hace si la terminal activa es la del proceso que hizo el write
 }
 
-void read_tty(const char * buff, size_t count)
+void read_tty(char * buff, size_t count)
 {
   read_vterm(vt[getProcessVT(currentProc())], buff, count);
 }
 
 void flip_tty()
 {
-  cpytext_vterm(vt[active_vt_id], videoPutChar);
+  cpytext_vterm(vt[active_vt_id], (void(*)(char, uint8_t, uint8_t, uint8_t))videoPutChar);
 }
 
 void keyPressed_tty(keycode_t key) //esto se hace en la terminal activa

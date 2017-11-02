@@ -3,7 +3,6 @@
 #include "../PagingManager/paging.h"
 #include "../PageAllocator/pageAllocator.h"
 #include "trapStackFrame.h"
-#include <naiveConsole.h>
 #include <lib.h>
 
 typedef struct {
@@ -15,11 +14,13 @@ typedef struct {
 
 static uint64_t current_pid=0;
 static process_t processList[MAX_PROCESS];
-static uint64_t kernelStack;
+static void * kernelStack;
 static uint8_t contextState = CTX_KERNEL_MODE;
 
-static uint64_t stackPageToAddr(uint64_t stackPage);
-static uint64_t setupProcessStack(pcb_t * process);
+static void * stackPageToAddr(void * stackPage);
+static void * setupProcessStack(pcb_t * process);
+static void freeProcPages();
+static void mapProcPages();
 
 void lockProcess(uint64_t pid)
 {
@@ -30,7 +31,7 @@ void lockProcess(uint64_t pid)
 void * assignAllocatedPage(uint64_t pid, void * page)
 {
 	int allocated_pages_quantity = processList[pid].pcb.allocated_pages_quantity;
-	void * retPage = (void *)(PROCESS_HEAP_BASE+allocated_pages_quantity*0x200000);
+	void * retPage = (void *)(PROCESS_HEAP_BASE+(uint64_t)allocated_pages_quantity*0x200000);
 
 	if(allocated_pages_quantity>=MAX_ALLOCATED_PAGES) {
 		return 0;
@@ -38,7 +39,7 @@ void * assignAllocatedPage(uint64_t pid, void * page)
 
 	processList[pid].pcb.allocated_pages[allocated_pages_quantity] = page;
 
-	mapPhysical((uint64_t)retPage ,page);
+	mapPhysical(retPage, page);
 
 	processList[pid].pcb.allocated_pages_quantity++;
 
@@ -57,6 +58,7 @@ uint64_t getNewPID()
 		if(processList[i].state == PROC_STATE_UNASSIGNED)
 			return i;
 	}
+	return 0;
 }
 
 int getProcessVT(uint64_t pid)
@@ -74,7 +76,7 @@ pcb_t createProcess(uint8_t moduleid, uint64_t ppid, int vt_id)
 	newProc.vt_id = vt_id;
 	newProc.code_page = allocatePage();
 	newProc.allocated_pages_quantity = 0;
-	newProc.stack = stackPageToAddr((uint64_t)allocatePage());
+	newProc.stack = stackPageToAddr(allocatePage());
 	newProc.stack = setupProcessStack(&newProc);
 	loadModule(moduleid, newProc.code_page);
 	return newProc;
@@ -144,16 +146,16 @@ int listProcs(process_info_t * procs)
 }
 
 //va al final de la pagina, el stack crece para arriba
-uint64_t stackPageToAddr(uint64_t stackPage)
+void * stackPageToAddr(void * stackPage)
 {
 	return stackPage + pageSize() - 0x1;
 }
 
-uint64_t setupProcessStack(pcb_t * process)
+void * setupProcessStack(pcb_t * process)
 {
 	trapStackFrame_t * stack = (trapStackFrame_t *)process->stack - 1;
 
-	stack->rip = getLogicalUserlandPage();
+	stack->rip = (uint64_t)getLogicalUserlandPage();
 	stack->cs = 0x08;
 	stack->rflags = 0x202;
 	stack->rsp = (uint64_t)&(stack->base);
@@ -175,7 +177,7 @@ uint64_t setupProcessStack(pcb_t * process)
 	stack->rbx = 0x00;
 	stack->rax = 0x00;
 
-	return (uint64_t)stack;
+	return (void *)stack;
 }
 
 void schedule()
@@ -201,7 +203,7 @@ void mapProcPages()
 	mapProcess(processList[current_pid].pcb.code_page);
 
 	for(; i<processList[current_pid].pcb.allocated_pages_quantity; i++) {
-		mapPhysical(PROCESS_HEAP_BASE+i*0x200000, processList[current_pid].pcb.allocated_pages[i]);
+		mapPhysical((void *)((uint64_t)PROCESS_HEAP_BASE+i*0x200000), processList[current_pid].pcb.allocated_pages[i]);
 	}
 }
 
@@ -217,19 +219,19 @@ void freeProcPages()
 	}
 }
 
-uint64_t restoreProcessStack(uint64_t kstack)
+void * restoreProcessStack(void * kstack)
 {
 	kernelStack = kstack;
 	contextState=CTX_USER_MODE;
 	return processList[current_pid].pcb.stack;
 }
 
-uint64_t currentlyInKernelMode()
+int currentlyInKernelMode()
 {
 		return contextState==CTX_KERNEL_MODE;
 }
 
-uint64_t restoreKernelStack(uint64_t stack)
+void * restoreKernelStack(void * stack)
 {
 	if(currentlyInKernelMode())
 		return 0;

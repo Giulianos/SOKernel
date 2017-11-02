@@ -1,8 +1,8 @@
 #ifndef _PAGING_H
 #define _PAGING_H
 
-void mapProcess(uint64_t pageAddr);
-void mapPhysical(uint64_t logic, uint64_t physical);
-uint64_t getLogicalUserlandPage();
+void mapProcess(void * pageAddr);
+void mapPhysical(void * logic, void * physical);
+void * getLogicalUserlandPage();
 
 #endif
