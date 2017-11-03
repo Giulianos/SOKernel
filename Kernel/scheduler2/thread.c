@@ -13,8 +13,18 @@ thread_t create_thread(void * code, process_t process)
 {
   thread_t ret = (thread_t)k_malloc(sizeof(struct thread));
 
-  ret->tid = 0; //get_new_tid_scheduler();
+  if(ret == NULL) {
+    k_log("Couldn't allocate space for thread!\n");
+    return NULL;
+  }
+  if(process == NULL) {
+    k_log("Couldn't create thread without a process!\n");
+    return NULL;
+  }
+
+  ret->tid = 0;
   ret->process = process;
+  offer_thread_queue(process->threads, ret);
   ret->state = THREAD_READY;
   ret->code = code;
   ret->stack = to_stack_start(allocatePage());
