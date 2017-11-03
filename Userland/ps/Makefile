@@ -20,6 +20,8 @@ $(MODULE): $(OBJECTS_C) $(OBJECTS_ASM) $(OBJECTS_STDLIB)
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 clean:
-	rm -rf asm/*.o *.o *.bin
+		rm -rf $(OBJECTS_ASM)
+		rm -rf $(OBJECTS_C)
+		rm -rf $(OBJECTS_STDLIB)
 
 .PHONY: all clean print

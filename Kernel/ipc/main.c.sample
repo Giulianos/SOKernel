@@ -1,0 +1,40 @@
+#include "message_queue.h"
+#include <stdio.h>
+
+int main(int argc, char * argv[])
+{
+  message_queue_t q;
+  char buffer[255];
+
+  add_message_queue(new_message_queue("mi_queue"));
+  add_message_queue(new_message_queue("mi_queue2"));
+
+  q = get_message_queue("mi_queue");
+
+  write_message_queue(q, "hola", 4);
+  write_message_queue(q, "hola1", 5);
+  write_message_queue(q, "hola2", 5);
+
+  q = get_message_queue("mi_queue2");
+  write_message_queue(q, "holaq2", 6);
+
+
+  q = get_message_queue("mi_queue");
+
+  read_message_queue(q, buffer, 255);
+  printf("%.255s\n", buffer);
+  read_message_queue(q, buffer, 255);
+  printf("%.255s\n", buffer);
+
+  remove_message_queue("mi_queue");
+
+  q = get_message_queue("mi_queue2");
+
+  read_message_queue(q, buffer, 255);
+  printf("%.255s\n", buffer);
+
+  remove_message_queue("mi_queue2");
+
+  return 0;
+
+}
