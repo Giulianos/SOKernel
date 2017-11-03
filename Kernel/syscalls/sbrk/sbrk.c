@@ -4,5 +4,5 @@
 
 void * syscall_sbrk()
 {
-  return (void *)assignAllocatedPage(currentProc(), allocatePage());
+  return 0;//(void *)assignAllocatedPage(currentProc(), allocatePage());
 }

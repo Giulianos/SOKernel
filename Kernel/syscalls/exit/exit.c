@@ -3,6 +3,5 @@
 
 int syscall_exit()
 {
-  killProc(currentProc());
   return 1;
 }

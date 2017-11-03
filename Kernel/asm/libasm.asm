@@ -5,10 +5,7 @@ global reloadCR3
 global switchToProcess
 global getSampleRFLAGS
 
-extern restoreKernelStack
-extern restoreProcessStack
-extern schedule
-extern switchContextState
+extern process_context_switch
 
 %include "./asm/macros.m"
 
@@ -58,7 +55,7 @@ getSampleRFLAGS:
 
 switchToProcess:
 	mov rdi, rsp
-	call restoreProcessStack
+	call process_context_switch
 	mov rsp, rax
 	popaq
 	iretq

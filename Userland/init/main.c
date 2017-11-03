@@ -8,5 +8,6 @@ extern void putc ( void* p, char c);
 
 int main() {
 	init_printf(0, putc);
+	printf("init started!\n");
 	while(1) {}
 }

@@ -77,6 +77,7 @@ void loadModuleToKernel(void ** module, void ** targetModuleAddress, uint8_t mod
 
 void loadModule(uint8_t id, void * text_section)
 {
+  k_log("Loading module %d to address %x!\n", id, text_section);
   k_memcpy((void *)text_section, modules[id].dir, modules[id].size);
 }
 

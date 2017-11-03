@@ -1,7 +1,7 @@
-#include "../../Scheduler/process.h"
+#include "../../scheduler2/scheduler.h"
 
 int syscall_yield()
 {
-  schedule();
+  schedule_scheduler();
   return 1;
 }

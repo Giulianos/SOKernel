@@ -2,5 +2,5 @@
 
 int syscall_ps(process_info_t * procs)
 {
-  return listProcs(procs);
+  return 1;
 }

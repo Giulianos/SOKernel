@@ -93,7 +93,7 @@ void keyPressed_vterm(vterm_t vt, keycode_t key)
       putCharBuffer(&(vt->kbBuffer), ascii);
       p = pollLockedProcess(&(vt->lockedQ));
       dumpBuffer(vt, p.buffer);
-      unlockProcess(p.pid);
+      //unlockProcess(p.pid);
     }
     else {
       putchar_vterm(vt, ascii);
@@ -143,11 +143,11 @@ void read_vterm(vterm_t vt, char * buff, size_t count)
 {
   lockedProcess_t aux;
 
-  aux.pid = currentProc();
+  aux.pid = 0;// currentProc();
   aux.count = count;
   aux.buffer = buff;
   offerLockedProcess(&(vt->lockedQ), aux);
-  lockProcess(aux.pid);
+  //lockProcess(aux.pid);
 }
 
 void format_vterm(vterm_t vt, unsigned char format)

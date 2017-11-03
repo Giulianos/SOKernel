@@ -3,6 +3,5 @@
 
 int syscall_wait(uint64_t pid)
 {
-    waitProcess(currentProc(), pid);
     return 1;
 }

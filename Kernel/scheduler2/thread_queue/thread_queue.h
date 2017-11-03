@@ -1,0 +1,13 @@
+#ifndef THREAD_QUEUE_H
+#define THREAD_QUEUE_H
+
+  #include "../thread.h"
+  
+  typedef struct thread_queue * thread_queue_t;
+
+  thread_queue_t new_thread_queue();
+  int offer_thread_queue(thread_queue_t tq, thread_t thread);
+  thread_t poll_thread_queue(thread_queue_t tq);
+  thread_t peek_thread_queue(thread_queue_t tq);
+
+#endif
