@@ -50,6 +50,8 @@ void schedule_scheduler()
   k_log("Scheduled! Next thread has tid:%d\n", current_thread_scheduler->tid);
 }
 
+
+
 thread_t current_thread()
 {
   return current_thread_scheduler;
