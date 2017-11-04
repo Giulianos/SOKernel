@@ -1,4 +1,4 @@
-#include "../../scheduler2/scheduler.h"
+#include "../../scheduler/scheduler.h"
 
 int syscall_yield()
 {

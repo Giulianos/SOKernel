@@ -18,7 +18,9 @@ int init_scheduler()
 {
   ready_queue_scheduler = new_thread_cqueue();
   if(ready_queue_scheduler == NULL) {
+    #ifdef SCHEDULER_DEBUG_MSG
     k_log("Couldn't allocate space for ready_queue\n");
+    #endif
     return -1;
   }
   current_tid_scheduler = 0;
@@ -32,7 +34,9 @@ int add_scheduler(thread_t thread)
   if(thread->tid < 0)
     thread->tid = get_new_tid_scheduler();
   if(offer_thread_cqueue(ready_queue_scheduler, thread)>0) {
+    #ifdef SCHEDULER_DEBUG_MSG
     k_log("Added thread with tid:%d to the scheduler\n", thread->tid);
+    #endif
     return 1;
   }
   return -1;
@@ -43,7 +47,9 @@ void schedule_scheduler()
   rotate_thread_cqueue(ready_queue_scheduler);
   current_thread_scheduler = peek_thread_cqueue(ready_queue_scheduler);
   mapProcess(current_thread_scheduler->process->code);
-  //k_log("Scheduled! Next thread has tid:%d\n", current_thread_scheduler->tid);
+  #ifdef SCHEDULER_DEBUG_MSG
+  k_log("Scheduled! Next thread has tid:%d\n", current_thread_scheduler->tid);
+  #endif
 }
 
 int get_new_tid_scheduler()
@@ -81,7 +87,9 @@ int block_thread(thread_t thread, int queue, void * extra_info)
   /* First we check if the blocked queue exists */
   if(blocked_queue == NULL)
   {
+    #ifdef SCHEDULER_DEBUG_MSG
     k_log("%d couldn't be blocked because the queue doesn't exist!\n", thread->tid);
+    #endif
     return -1;
   }
 
@@ -93,7 +101,9 @@ int block_thread(thread_t thread, int queue, void * extra_info)
     schedule_scheduler();
     return 1;
   }
+  #ifdef SCHEDULER_DEBUG_MSG
   k_log("%d couldn't be blocked!\n", thread->tid);
+  #endif
   return -1;
 }
 
@@ -108,7 +118,9 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
   /* First we check if the blocked queue exists */
   if(blocked_queue == NULL)
   {
+    #ifdef SCHEDULER_DEBUG_MSG
     k_log("Couldn't unblock thread because the queue doesn't exist!\n");
+    #endif
     return -1;
   }
 
@@ -120,6 +132,8 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
     return 1;
   }
 
+  #ifdef SCHEDULER_DEBUG_MSG
   k_log("%d couldn't be unblocked!\n", unblocked_thread->tid);
+  #endif
   return -1;
 }

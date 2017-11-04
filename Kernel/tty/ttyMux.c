@@ -1,7 +1,7 @@
 #include "../VideoDriver/driver.h"
 #include "vterm.h"
 #include "tty.h"
-#include "../scheduler2/scheduler.h"
+#include "../scheduler/scheduler.h"
 
 #define KERNEL_LOG_VT 7
 

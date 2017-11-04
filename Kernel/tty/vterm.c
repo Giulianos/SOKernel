@@ -2,7 +2,7 @@
 #include <lib.h>
 #include "vterm.h"
 #include "lockedQueue.h"
-#include "../scheduler2/scheduler.h"
+#include "../scheduler/scheduler.h"
 #include "keyMapping.h"
 #include "buffer.h"
 
@@ -155,7 +155,9 @@ int read_vterm(vterm_t vt, char * buff, size_t count)
 {
   read_block_details_t details = (read_block_details_t)k_malloc(sizeof(struct read_block_details));
   if(details == NULL) {
+    #ifdef VTERM_DEBUG_MSG
     k_log("Error while reading from terminal\n");
+    #endif
     return -1;
   }
   details->buffer = buff;

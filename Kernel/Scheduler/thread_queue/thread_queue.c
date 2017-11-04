@@ -25,7 +25,9 @@ thread_queue_t new_thread_queue()
   thread_queue_t ret = (thread_queue_t)k_malloc(sizeof(struct thread_queue));
 
   if(ret == NULL) {
+    #ifdef THREAD_QUEUE_DEBUG_MSG
     k_log("Couldn't allocate space for thread_queue!\n");
+    #endif
     return NULL;
   }
 
@@ -45,7 +47,9 @@ int offer_thread_queue(thread_queue_t tq, thread_t thread, void * extra_info)
   thread_queue_node_t new_node = (thread_queue_node_t)k_malloc(sizeof(struct thread_queue_node));
 
   if(new_node == NULL) {
+    #ifdef THREAD_QUEUE_DEBUG_MSG
     k_log("Couldn't allocate space for thread_queue_node!\n");
+    #endif
     return -1;
   }
 

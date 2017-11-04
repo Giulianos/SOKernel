@@ -24,7 +24,9 @@ int new_blocked_queue()
   new_node = (blocked_queue_list_node_t)k_malloc(sizeof(struct blocked_queue_list_node));
 
   if(new_node == NULL || new_queue == NULL) {
+    #ifdef BLOCKED_QUEUE_LIST_DEBUG_MSG
     k_log("Error creating blocked queue\n");
+    #endif
     return -1;
   }
 

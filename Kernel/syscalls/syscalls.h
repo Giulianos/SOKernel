@@ -3,7 +3,6 @@
 
   #include <stdlib.h>
   #include <stdint.h>
-  #include "../Scheduler/process.h"
 
   #define SYSCALL_EXIT 0x01
   #define SYSCALL_READ 0x03
@@ -20,11 +19,12 @@
 
   uint64_t syscall_execve(int module_number);
   void * syscall_sbrk();
-  int syscall_ps(process_info_t * procs);
+  int syscall_ps();
   int syscall_exit();
   int syscall_read(int fd, char * buff, size_t count);
   int syscall_write(int fd, char * buff, size_t count);
   int syscall_wait(uint64_t pid);
   int syscall_yield();
+  int syscall_fork();
 
 #endif

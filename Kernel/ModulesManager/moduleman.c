@@ -8,19 +8,6 @@ static module_t modules[256] __attribute__ ((section (".data"))); //BSS will be 
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
 
-/*
-*      +--------------------+
-*      |       KERNEL       |
-*      | MODULES/KERNEL BSS | 0x0000000 - endOfKernel
-*      |....................|
-*      +--------------------+
-*      |   COPIED MODULES   | 0x0A00000 - 0x13FFFFF
-*      +--------------------+
-*      |    RUNTIME PAGE    | 0x1400000 - 0x15FFFFF
-*      +--------------------+
-*
-*/
-
 static void * expandedModulesArea = (void *)0xA00000; //10MB
 static void * runtimePage = (void *)12;
 static void * userlandLogicPage = (void *)0x1FE00000;
@@ -77,7 +64,9 @@ void loadModuleToKernel(void ** module, void ** targetModuleAddress, uint8_t mod
 
 void loadModule(uint8_t id, void * text_section)
 {
+  #ifdef MODULE_MANAGER_DEBUG_MSG
   k_log("Loading module %d to address %x!\n", id, text_section);
+  #endif
   k_memcpy((void *)text_section, modules[id].dir, modules[id].size);
 }
 

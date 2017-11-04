@@ -2,7 +2,7 @@ global cpuVendor
 global sti
 global cli
 global reloadCR3
-global switchToProcess
+global switch_to_process
 global getSampleRFLAGS
 
 extern process_context_switch
@@ -53,7 +53,7 @@ getSampleRFLAGS:
   pop rax
 	ret
 
-switchToProcess:
+switch_to_process:
 	mov rdi, rsp
 	call process_context_switch
 	mov rsp, rax
