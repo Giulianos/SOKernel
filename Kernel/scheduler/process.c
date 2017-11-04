@@ -1,12 +1,15 @@
 #include <stdlib.h>
 #include <lib.h>
-#include "../PageAllocator/pageAllocator.h"
+#include <page_allocator.h>
+#include <paging.h>
 #include "../ModulesManager/modules.h"
 #include "process.h"
 #include "thread.h"
 #include "thread_queue/thread_queue.h"
 
 extern int get_new_pid_scheduler();
+
+static void free_process_page(void * physical, void * logical);
 
 process_t create_process(int module, int ppid, int vt_id, int flags)
 {
@@ -21,7 +24,28 @@ process_t create_process(int module, int ppid, int vt_id, int flags)
 	loadModule((unsigned char)module, ret->code);
 
 	ret->threads = new_thread_queue();
-	offer_thread_queue(ret->threads, create_thread(ret->code, ret), NULL);
+	create_thread(get_logical_userland_page(), ret);
+	#ifdef PROCESS_DEBUG_MSG
+	k_log("Process with pid:%d has been created!\n", ret->pid);
+	#endif
+
+	return ret;
+}
+
+process_t clone_process(process_t process, thread_t calling_thread)
+{
+	process_t ret = (process_t)k_malloc(sizeof(struct process));
+
+	ret->pid = get_new_pid_scheduler();
+	ret->ppid = process->pid;
+	ret->vt_id = process->vt_id;
+	ret->code = allocatePage();
+  ret->heap = NULL;
+
+	k_memcpy((void *)ret->code, process->code, pageSize());
+
+	ret->threads = new_thread_queue();
+	clone_thread(calling_thread, ret);
 	#ifdef PROCESS_DEBUG_MSG
 	k_log("Process with pid:%d has been created!\n", ret->pid);
 	#endif
@@ -31,8 +55,16 @@ process_t create_process(int module, int ppid, int vt_id, int flags)
 
 void kill_process(process_t process)
 {
-  //Threads should be terminated here
+	free_process_page(process->code, NULL);
+	each_pagemap(process->heap, free_process_page);
+  //Freeing the thread-list terminates all process threads
+	free_thread_queue(process->threads);
   k_free((void *)process);
+}
+
+void free_process_page(void * physical, void * logical)
+{
+	freePage(physical);
 }
 
 thread_t get_main_thread_process(process_t process)

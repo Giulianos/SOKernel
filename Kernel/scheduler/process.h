@@ -1,7 +1,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-  #include "pagemap_list/pagemap_list.h"
+  #include <datastructures/pagemap_list.h>
 
   typedef int pid_t;
   typedef struct process * process_t;
@@ -19,6 +19,8 @@
   };
 
   process_t create_process(int module, int ppid, int vt_id, int flags);
+  process_t clone_process(process_t process, thread_t calling_thread);
+  void kill_process(process_t process);
   thread_t get_main_thread_process(process_t process);
 
 #endif

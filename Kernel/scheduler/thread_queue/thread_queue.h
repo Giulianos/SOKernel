@@ -11,5 +11,7 @@
   thread_t peek_thread_queue(thread_queue_t tq);
   int free_thread_queue(thread_queue_t tq);
   void * peek_extra_info_thread_queue(thread_queue_t tq);
+  int remove_thread_queue(thread_queue_t tq, thread_t thread);
+  int is_empty_thread_queue(thread_queue_t tq);
 
 #endif

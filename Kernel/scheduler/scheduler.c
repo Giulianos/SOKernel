@@ -2,7 +2,8 @@
 #include "blocked_queue_list/blocked_queue_list.h"
 #include "process.h"
 #include "thread.h"
-#include "../PagingManager/paging.h"
+#include <page_allocator.h>
+#include <paging.h>
 #include <stdlib.h>
 #include <lib.h>
 
@@ -46,7 +47,7 @@ void schedule_scheduler()
 {
   rotate_thread_cqueue(ready_queue_scheduler);
   current_thread_scheduler = peek_thread_cqueue(ready_queue_scheduler);
-  mapProcess(current_thread_scheduler->process->code);
+  map_process(current_thread_scheduler->process->code);
   #ifdef SCHEDULER_DEBUG_MSG
   k_log("Scheduled! Next thread has tid:%d\n", current_thread_scheduler->tid);
   #endif
@@ -66,6 +67,22 @@ thread_t current_thread()
 {
   return current_thread_scheduler;
 }
+
+int terminate_thread(thread_t thread)
+{
+  freePage(thread->stack);
+  if(thread->state == THREAD_READY) {
+    remove_thread_cqueue(ready_queue_scheduler, thread);
+    if(current_thread_scheduler == thread)
+      schedule_scheduler();
+  } else {
+    remove_thread_queue(get_blocked_queue(thread->blocked_queue), thread);
+  }
+
+  k_free(thread);
+  return 1;
+}
+
 
 
 /* ---------------- Thread-blocking mechanism implementation ---------------- */

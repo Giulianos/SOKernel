@@ -11,21 +11,27 @@ typedef uint64_t PDEntry_t;
 PDEntry_t * PDAddr = (PDEntry_t *)0x10000;
 uint64_t userlandPhysicalPage = 10;
 
-void mapProcess(void * pageAddr)
+void map_process(void * pageAddr)
 {
-  mapPhysical((void *)USERLAND_LOGIC_PAGE, pageAddr);
+  map_physical((void *)USERLAND_LOGIC_PAGE, pageAddr);
+  reloadCR3();
 }
 
-void mapPhysical(void * logic, void * physical)
+void map_physical(void * logic, void * physical)
 {
   unsigned long logicPageNum = (unsigned long)((unsigned long)logic/0x200000);
   unsigned long physicalPageNum = (unsigned long)((unsigned long)physical/0x200000);
 
   PDAddr[logicPageNum] = PDAddr[physicalPageNum];
-	reloadCR3();
 }
 
-void * getLogicalUserlandPage()
+void map_pagemap_list(pagemap_list_t pm_list)
+{
+  each_pagemap(pm_list, map_physical);
+  reloadCR3();
+}
+
+void * get_logical_userland_page()
 {
 	return (void *)USERLAND_LOGIC_PAGE;
 }

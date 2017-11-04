@@ -12,5 +12,6 @@
   int rotate_thread_cqueue(thread_cqueue_t tq);
   int free_thread_cqueue(thread_cqueue_t tq);
   int remove_thread_cqueue(thread_cqueue_t tq, thread_t thread);
+  int is_empty_thread_cqueue(thread_cqueue_t tq);
 
 #endif

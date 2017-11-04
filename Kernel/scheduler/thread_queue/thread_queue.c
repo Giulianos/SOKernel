@@ -1,6 +1,7 @@
 #include <lib.h>
 #include <stdlib.h>
 #include "thread_queue.h"
+#include "../scheduler.h"
 
 typedef struct thread_queue_node * thread_queue_node_t;
 typedef struct thread_queue * thread_queue_t;
@@ -39,6 +40,15 @@ thread_queue_t new_thread_queue()
 
 int free_thread_queue(thread_queue_t tq)
 {
+  thread_t aux_thread;
+
+  while((aux_thread=poll_thread_queue(tq)) != NULL)
+  {
+    terminate_thread(aux_thread);
+  }
+
+  k_free(tq);
+
   return 1;
 }
 
@@ -109,4 +119,43 @@ thread_t peek_thread_queue(thread_queue_t tq)
   if(tq->first == NULL)
     return NULL;
   return tq->first->thread;
+}
+
+int is_empty_thread_queue(thread_queue_t tq)
+{
+  return tq->first == NULL;
+}
+
+int remove_thread_queue(thread_queue_t tq, thread_t thread)
+{
+  thread_queue_node_t curr;
+
+  if(tq == NULL)
+    return -1;
+  if(is_empty_thread_queue(tq))
+    return -1;
+
+  curr = tq->first;
+  do {
+    if(curr->thread->tid == thread->tid) {
+      if(curr == tq->first && curr == tq->last) {
+        tq->first = NULL;
+        tq->last = NULL;
+      } else if(curr == tq->first) {
+        tq->first = tq->first->next;
+        tq->first->prev = NULL;
+      } else if(curr == tq->last) {
+        tq->last = tq->last->prev;
+        tq->last->next = NULL;
+      } else {
+        curr->next->prev = curr->prev;
+        curr->prev->next = curr->next;
+      }
+      k_free(curr);
+      return 1;
+    } else {
+      curr = curr->next;
+    }
+  } while(curr != NULL);
+  return -1;
 }

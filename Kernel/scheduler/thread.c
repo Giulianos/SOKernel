@@ -4,11 +4,12 @@
 #include "process.h"
 #include "thread_stack_frame.h"
 #include "thread_queue/thread_queue.h"
-#include "../PagingManager/paging.h"
-#include "../PageAllocator/pageAllocator.h"
+#include <paging.h>
+#include <page_allocator.h>
 
 static void * setup_stack_frame_thread(thread_t thread);
-void * to_stack_start(void * stack);
+static void clone_thread_stack(thread_t src_thread, thread_t dest_src);
+static void * to_stack_start(void * stack);
 
 thread_t create_thread(void * code, process_t process)
 {
@@ -22,7 +23,7 @@ thread_t create_thread(void * code, process_t process)
   }
   if(process == NULL) {
     #ifdef THREAD_DEBUG_MSG
-    k_log("Couldn't create thread without a process!\n");
+    k_log("Can't create thread without a process!\n");
     #endif
     return NULL;
   }
@@ -31,16 +32,61 @@ thread_t create_thread(void * code, process_t process)
   ret->process = process;
   offer_thread_queue(process->threads, ret, NULL);
   ret->state = THREAD_READY;
+  ret->blocked_queue = -1;
   ret->code = code;
-  ret->stack = to_stack_start(allocatePage());
+  ret->stack_page = allocatePage();
+  ret->stack = to_stack_start(ret->stack_page);
   ret->stack = setup_stack_frame_thread(ret);
 
-#ifdef THREAD_DEBUG_MSG
+  #ifdef THREAD_DEBUG_MSG
   k_log("Thread with tid:%d has been created!\n", ret->tid);
   k_log("Stack is at %x\n", ret->stack);
-#endif
+  #endif
 
 	return ret;
+}
+
+thread_t clone_thread(thread_t thread, process_t owner_process)
+{
+  thread_t ret = (thread_t)k_malloc(sizeof(struct thread));
+
+  if(ret == NULL) {
+    #ifdef THREAD_DEBUG_MSG
+    k_log("Couldn't allocate space for thread!\n");
+    #endif
+    return NULL;
+  }
+  if(owner_process == NULL) {
+    #ifdef THREAD_DEBUG_MSG
+    k_log("Can't clone thread without an owner process!\n");
+    #endif
+    return NULL;
+  }
+
+  ret->tid = -1; /* For the scheduler it means a new thread */
+  ret->process = owner_process;
+  offer_thread_queue(owner_process->threads, ret, NULL);
+  ret->state = THREAD_READY;
+  ret->blocked_queue = -1;
+  ret->code = thread->code;
+  clone_thread_stack(thread, ret);
+
+  #ifdef THREAD_DEBUG_MSG
+  k_log("Thread with tid:%d has been created!\n", ret->tid);
+  k_log("Stack is at %x\n", ret->stack);
+  #endif
+
+  return ret;
+}
+
+void clone_thread_stack(thread_t src_thread, thread_t dest_src)
+{
+  dest_src->stack_page = allocatePage();
+
+  k_memcpy(dest_src->stack_page, src_thread->stack_page, pageSize());
+  dest_src->stack = (void *)( (char *)dest_src->stack_page +
+                              (size_t)((char *)src_thread->stack -
+                              (char *)src_thread->stack_page) );
 }
 
 int get_vt_thread(thread_t thread)

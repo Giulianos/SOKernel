@@ -12,5 +12,6 @@
   int free_blocked_queue();
   int block_thread(thread_t thread, int queue, void * extra_info);
   int unblock_from_queue_thread(int queue, void(*callback)(void *));
+  int terminate_thread(thread_t thread);
 
 #endif

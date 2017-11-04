@@ -1,4 +1,4 @@
-#include "pageAllocator.h"
+#include "page_allocator.h"
 
 //0x5020: direccion donde está la cantidad de RAM de la computadora
 static uint32_t * ramAmount = ((uint32_t *) 0x5020);

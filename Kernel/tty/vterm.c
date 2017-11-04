@@ -112,6 +112,7 @@ void read_unblock_callback(void * info)
 {
   read_block_details_t det = (read_block_details_t)info;
   dump_buffer(det->vt, det->buffer);
+  k_free(info);
 }
 
 void dump_buffer(vterm_t vt, char * dest)

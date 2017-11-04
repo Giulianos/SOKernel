@@ -2,8 +2,7 @@
 #include <string.h>
 #include <lib.h>
 #include "interrupts/interrupts.h"
-#include "PagingManager/paging.h"
-#include "PageAllocator/pageAllocator.h"
+#include <page_allocator.h>
 #include "scheduler/scheduler.h"
 #include "scheduler/context_switch.h"
 #include "ModulesManager/modules.h"

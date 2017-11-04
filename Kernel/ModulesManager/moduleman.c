@@ -1,7 +1,7 @@
 #include <lib.h>
 #include "modules.h"
-#include "../PageAllocator/pageAllocator.h"
-#include "../PagingManager/paging.h"
+#include <page_allocator.h>
+#include <paging.h>
 
 static module_t modules[256] __attribute__ ((section (".data"))); //BSS will be cleared, so let's put it in data
 
@@ -33,7 +33,7 @@ void loadModulesToKernel()
     loadModuleToKernel(&currentModule, &moduleDest, i);
   }
   expandedModulesQuantity=modulesQuantity;
-	userlandLogicPage = getLogicalUserlandPage();
+	userlandLogicPage = get_logical_userland_page();
 }
 
 uint8_t getModulesQuantity()

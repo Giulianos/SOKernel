@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <lib.h>
-#include "../PageAllocator/pageAllocator.h"
+#include <page_allocator.h>
 
 #define NALLOC (pageSize()/sizeof(Header))
 

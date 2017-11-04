@@ -1,6 +1,7 @@
 #include <lib.h>
 #include <stdlib.h>
 #include "thread_cqueue.h"
+#include "../scheduler.h"
 
 typedef struct thread_cqueue_node * thread_cqueue_node_t;
 typedef struct thread_cqueue * thread_cqueue_t;
@@ -39,6 +40,15 @@ thread_cqueue_t new_thread_cqueue()
 
 int free_thread_cqueue(thread_cqueue_t tq)
 {
+  thread_t aux_thread;
+
+  while((aux_thread=poll_thread_cqueue(tq)) != NULL)
+  {
+    terminate_thread(aux_thread);
+  }
+
+  k_free(tq);
+
   return 1;
 }
 
@@ -105,11 +115,21 @@ thread_t peek_thread_cqueue(thread_cqueue_t tq)
   return tq->first->thread;
 }
 
+int is_empty_thread_cqueue(thread_cqueue_t tq)
+{
+  return tq->first == NULL;
+}
 
 int remove_thread_cqueue(thread_cqueue_t tq, thread_t thread)
 {
-  thread_cqueue_node_t curr = tq->first;
+  thread_cqueue_node_t curr;
 
+  if(tq == NULL)
+    return -1;
+  if(is_empty_thread_cqueue(tq))
+    return -1;
+
+  curr = tq->first;
   do {
     if(curr->thread->tid == thread->tid) {
       if(curr == tq->first && curr == tq->last) {
@@ -127,6 +147,7 @@ int remove_thread_cqueue(thread_cqueue_t tq, thread_t thread)
         curr->next->prev = curr->prev;
         curr->prev->next = curr->next;
       }
+      k_free(curr);
       return 1;
     } else {
       curr = curr->next;
