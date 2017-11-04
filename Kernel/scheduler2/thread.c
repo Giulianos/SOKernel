@@ -15,15 +15,19 @@ thread_t create_thread(void * code, process_t process)
   thread_t ret = (thread_t)k_malloc(sizeof(struct thread));
 
   if(ret == NULL) {
+    #ifdef THREAD_DEBUG_MSG
     k_log("Couldn't allocate space for thread!\n");
+    #endif
     return NULL;
   }
   if(process == NULL) {
+    #ifdef THREAD_DEBUG_MSG
     k_log("Couldn't create thread without a process!\n");
+    #endif
     return NULL;
   }
 
-  ret->tid = 0;
+  ret->tid = -1; /* For the scheduler it means a new thread */
   ret->process = process;
   offer_thread_queue(process->threads, ret, NULL);
   ret->state = THREAD_READY;
@@ -31,8 +35,10 @@ thread_t create_thread(void * code, process_t process)
   ret->stack = to_stack_start(allocatePage());
   ret->stack = setup_stack_frame_thread(ret);
 
+#ifdef THREAD_DEBUG_MSG
   k_log("Thread with tid:%d has been created!\n", ret->tid);
   k_log("Stack is at %x\n", ret->stack);
+#endif
 
 	return ret;
 }

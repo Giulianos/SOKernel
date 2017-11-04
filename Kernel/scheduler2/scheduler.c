@@ -28,7 +28,9 @@ int init_scheduler()
 
 int add_scheduler(thread_t thread)
 {
-  thread->tid = get_new_tid_scheduler();
+  /* If the thread has tid=-1 it means it was never scheduled */
+  if(thread->tid < 0)
+    thread->tid = get_new_tid_scheduler();
   if(offer_thread_cqueue(ready_queue_scheduler, thread)>0) {
     k_log("Added thread with tid:%d to the scheduler\n", thread->tid);
     return 1;
@@ -88,6 +90,7 @@ int block_thread(thread_t thread, int queue, void * extra_info)
   if(offer_thread_queue(blocked_queue, thread, extra_info)>0)
   {
     remove_thread_cqueue(ready_queue_scheduler, thread);
+    schedule_scheduler();
     return 1;
   }
   k_log("%d couldn't be blocked!\n", thread->tid);
