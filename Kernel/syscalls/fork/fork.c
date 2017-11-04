@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-int syscall_exit()
+int syscall_fork()
 {
   return 1;
 }

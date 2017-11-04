@@ -2,7 +2,7 @@
 #include <lib.h>
 #include "vterm.h"
 #include "lockedQueue.h"
-#include "../Scheduler/process.h"
+#include "../scheduler/scheduler.h"
 #include "keyMapping.h"
 #include "buffer.h"
 
@@ -18,16 +18,25 @@ typedef struct vterm_concrete
   charattr_t text[TTY_TEXTSIZE];
   int cursor;
   unsigned char format;
-  lockedQueue_t lockedQ;
+  int blocked_queue_id;
   unsigned char kbState;
   kbBuffer_t kbBuffer;
 } vterm_concrete_t;
 
+struct read_block_details
+{
+  void * buffer;
+  size_t count;
+  vterm_t vt;
+};
+
 typedef vterm_concrete_t * vterm_t;
+typedef struct read_block_details * read_block_details_t;
 
 static void scroll_vterm(vterm_t vt);
 static void putchar_vterm(vterm_t vt, char c);
-static void dumpBuffer(vterm_t vt, char * dest);
+static void read_unblock_callback(void * info);
+static void dump_buffer(vterm_t vt, char * dest);
 static void eraseChar_vterm(vterm_t vt);
 
 static int tty_last_id = 0;
@@ -50,9 +59,8 @@ vterm_t new_vterm()
   vterm->kbBuffer.f = 0;
   vterm->kbBuffer.l = 0;
 
-  //lockedQueue init
-  vterm->lockedQ.f = 0;
-  vterm->lockedQ.l = 0;
+  /* We ask the scheduler for a blocked queue */
+  vterm->blocked_queue_id = create_blocked_queue();
 
   return vterm;
 }
@@ -79,7 +87,7 @@ void scroll_vterm(vterm_t vt)
 void keyPressed_vterm(vterm_t vt, keycode_t key)
 {
   char ascii;
-  lockedProcess_t p;
+
   if(!updateState(key, &(vt->kbState)) && key.action == KBD_ACTION_PRESSED) {
     ascii = getAscii(key, vt->kbState);
     if(ascii == 0x8) {
@@ -91,9 +99,7 @@ void keyPressed_vterm(vterm_t vt, keycode_t key)
     else if(ascii == '\n') {
       putchar_vterm(vt, ascii);
       putCharBuffer(&(vt->kbBuffer), ascii);
-      p = pollLockedProcess(&(vt->lockedQ));
-      dumpBuffer(vt, p.buffer);
-      unlockProcess(p.pid);
+      unblock_from_queue_thread(vt->blocked_queue_id, read_unblock_callback);
     }
     else {
       putchar_vterm(vt, ascii);
@@ -102,7 +108,13 @@ void keyPressed_vterm(vterm_t vt, keycode_t key)
   }
 }
 
-void dumpBuffer(vterm_t vt, char * dest)
+void read_unblock_callback(void * info)
+{
+  read_block_details_t det = (read_block_details_t)info;
+  dump_buffer(det->vt, det->buffer);
+}
+
+void dump_buffer(vterm_t vt, char * dest)
 {
   while(!bufferIsEmpty(&(vt->kbBuffer))) {
     *(dest++) = getCharBuffer(&(vt->kbBuffer));
@@ -139,15 +151,20 @@ void write_vterm(vterm_t vt, const char * buff, size_t count)
   }
 }
 
-void read_vterm(vterm_t vt, char * buff, size_t count)
+int read_vterm(vterm_t vt, char * buff, size_t count)
 {
-  lockedProcess_t aux;
-
-  aux.pid = currentProc();
-  aux.count = count;
-  aux.buffer = buff;
-  offerLockedProcess(&(vt->lockedQ), aux);
-  lockProcess(aux.pid);
+  read_block_details_t details = (read_block_details_t)k_malloc(sizeof(struct read_block_details));
+  if(details == NULL) {
+    #ifdef VTERM_DEBUG_MSG
+    k_log("Error while reading from terminal\n");
+    #endif
+    return -1;
+  }
+  details->buffer = buff;
+  details->count = count;
+  details->vt = vt;
+  block_thread(current_thread(), vt->blocked_queue_id, (void *)details);
+  return 1;
 }
 
 void format_vterm(vterm_t vt, unsigned char format)

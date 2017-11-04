@@ -9,16 +9,16 @@ global spuriousInt7Handler
 global spuriousInt15Handler
 extern inputB
 extern outputB
-extern restoreKernelStack
-extern restoreProcessStack
-extern schedule
+extern schedule_scheduler
+extern process_context_switch
+extern kernel_context_switch
 
 %include "./asm/macros.m"
 
 keyboardHandler:
   pushaq
   mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
-  call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
+  call kernel_context_switch ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
   je .keyboardHandler_inKernel
   mov rsp, rax
@@ -28,7 +28,7 @@ keyboardHandler:
   out 0x20, al ;ACK al master pic
 
   mov rdi, rsp
-	call restoreProcessStack
+	call process_context_switch
 	mov rsp, rax
 	popaq
   ;mov [0xB8000], byte 'U'
@@ -48,7 +48,7 @@ keyboardHandler:
 mouseHandler:
   pushaq
   mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
-  call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
+  call kernel_context_switch ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
   je .mouseHandler_inKernel
   mov rsp, rax
@@ -59,7 +59,7 @@ mouseHandler:
   out 0xA0, al
 
   mov rdi, rsp
-	call restoreProcessStack
+	call process_context_switch
 	mov rsp, rax
 	popaq
   iretq
@@ -84,7 +84,7 @@ systemCallHandler:
   mov qword [temp_rdi], rdi
   mov qword [temp_rsi], rsi
   mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
-  call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
+  call kernel_context_switch ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
   je .systemCallHandler_inKernel
 
@@ -99,7 +99,7 @@ systemCallHandler:
   mov qword [temp_rax], rax ;Me guardo el retorno para devolverlo despues
 
   mov rdi, rsp
-	call restoreProcessStack
+	call process_context_switch
 	mov rsp, rax
 	popaq
   mov rax, qword [temp_rax] ;Piso rax con el valor devuelto por la syscall
@@ -124,15 +124,15 @@ systemCallHandler:
 timerTickHandler:
   pushaq
   mov rdi, rsp ;Guardo el stack pointer del proceso y recupero el del kernel
-  call restoreKernelStack ;Esta funcion guarda el stack de proceso y recupera el del kernel
+  call kernel_context_switch ;Esta funcion guarda el stack de proceso y recupera el del kernel
   cmp rax, 0x0 ;(en caso de que ya este en el kernel no hace nada y deuvelve 0)
   je .timerTickHandler_inKernel
   mov rsp, rax
 
-  call schedule ;Ejecuta el algoritmo de scheduling (por ahora round robin quantum:1)
+  call schedule_scheduler ;Ejecuta el algoritmo de scheduling (por ahora round robin quantum:1)
 
   mov rdi, rsp
-	call restoreProcessStack
+	call process_context_switch
 	mov rsp, rax
   mov al, 0x20
   out 0x20, al ;ACK al master pic

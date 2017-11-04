@@ -4,7 +4,8 @@
 #include "interrupts/interrupts.h"
 #include "PagingManager/paging.h"
 #include "PageAllocator/pageAllocator.h"
-#include "Scheduler/process.h"
+#include "scheduler/scheduler.h"
+#include "scheduler/context_switch.h"
 #include "ModulesManager/modules.h"
 #include "tty/tty.h"
 
@@ -35,20 +36,32 @@ void * initializeKernelBinary()
 int main()
 {
 	int i=0;
-	pcb_t aux_proc;
-	initializeScheduler();
+	process_t aux_process;
+	init_scheduler();
 	init_tty();
+	#ifdef KERNEL_INIT_DEBUG_MSG
 	k_log("Creating idle process...\n");
-	scheduleProcess(createProcess(0, 0, 0));
+	#endif
+	aux_process = create_process(0, 0, 0, 0);
+	add_scheduler(get_main_thread_process(aux_process));
+	#ifdef KERNEL_INIT_DEBUG_MSG
+	k_log("Creating init process...\n");
+	#endif
+	aux_process = create_process(1, 0, 0, 0);
+	add_scheduler(get_main_thread_process(aux_process));
+	#ifdef KERNEL_INIT_DEBUG_MSG
 	k_log("Creating shells...\n");
+	#endif
 	for(;i<7; i++) {
-		aux_proc = createProcess(2, 0, i);
-		k_log(" sh for tty%d has pid %d\n", i+1, aux_proc.pid);
-		scheduleProcess(aux_proc);
+		#ifdef KERNEL_INIT_DEBUG_MSG
+		k_log("Creating sh for tty%d\n", i+1);
+		#endif
+		aux_process = create_process(2, 0, i, 0);
+		add_scheduler(get_main_thread_process(aux_process));
 	}
-	schedule();
+	schedule_scheduler();
 	configureInterrupts();
-	switchToProcess();
+	switch_to_process();
 
 	while(1){
 	}

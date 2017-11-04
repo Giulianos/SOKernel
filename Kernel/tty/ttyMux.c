@@ -1,7 +1,7 @@
 #include "../VideoDriver/driver.h"
 #include "vterm.h"
 #include "tty.h"
-#include "../Scheduler/process.h"
+#include "../scheduler/scheduler.h"
 
 #define KERNEL_LOG_VT 7
 
@@ -34,8 +34,8 @@ void write_tty(const char * buff, size_t count)
 {
   if(!is_tty_initialized)
     return;
-  write_vterm(vt[getProcessVT(currentProc())], buff, count);
-  if(getProcessVT(currentProc()) == active_vt_id)
+  write_vterm(vt[get_vt_thread(current_thread())], buff, count);
+  if(get_vt_thread(current_thread()) == active_vt_id)
     flip_tty(); //solo se hace si la terminal activa es la del proceso que hizo el write
 }
 
@@ -44,7 +44,7 @@ void read_tty(char * buff, size_t count)
 {
   if(!is_tty_initialized)
     return;
-  read_vterm(vt[getProcessVT(currentProc())], buff, count);
+  read_vterm(vt[get_vt_thread(current_thread())], buff, count);
 }
 
 void flip_tty()

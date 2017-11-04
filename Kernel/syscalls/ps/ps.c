@@ -1,6 +1,4 @@
-#include "../../Scheduler/process.h"
-
-int syscall_ps(process_info_t * procs)
+int syscall_ps()
 {
-  return listProcs(procs);
+  return 1;
 }

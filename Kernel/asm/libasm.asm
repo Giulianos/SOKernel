@@ -2,13 +2,10 @@ global cpuVendor
 global sti
 global cli
 global reloadCR3
-global switchToProcess
+global switch_to_process
 global getSampleRFLAGS
 
-extern restoreKernelStack
-extern restoreProcessStack
-extern schedule
-extern switchContextState
+extern process_context_switch
 
 %include "./asm/macros.m"
 
@@ -56,9 +53,9 @@ getSampleRFLAGS:
   pop rax
 	ret
 
-switchToProcess:
+switch_to_process:
 	mov rdi, rsp
-	call restoreProcessStack
+	call process_context_switch
 	mov rsp, rax
 	popaq
 	iretq
