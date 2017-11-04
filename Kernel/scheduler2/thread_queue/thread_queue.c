@@ -8,6 +8,7 @@ typedef struct thread_queue * thread_queue_t;
 struct thread_queue_node
 {
   thread_t thread;
+  void * extra_info;
   thread_queue_node_t next;
   thread_queue_node_t prev;
 };
@@ -34,7 +35,12 @@ thread_queue_t new_thread_queue()
   return ret;
 }
 
-int offer_thread_queue(thread_queue_t tq, thread_t thread)
+int free_thread_queue(thread_queue_t tq)
+{
+  return 1;
+}
+
+int offer_thread_queue(thread_queue_t tq, thread_t thread, void * extra_info)
 {
   thread_queue_node_t new_node = (thread_queue_node_t)k_malloc(sizeof(struct thread_queue_node));
 
@@ -44,6 +50,7 @@ int offer_thread_queue(thread_queue_t tq, thread_t thread)
   }
 
   new_node->thread = thread;
+  new_node->extra_info = extra_info;
 
   if(tq->first == NULL) {
     tq->first = new_node;
@@ -60,6 +67,13 @@ int offer_thread_queue(thread_queue_t tq, thread_t thread)
   tq->size++;
 
   return 1;
+}
+
+void * peek_extra_info_thread_queue(thread_queue_t tq)
+{
+  if(tq->first == NULL)
+    return NULL;
+  return tq->first->extra_info;
 }
 
 thread_t poll_thread_queue(thread_queue_t tq)

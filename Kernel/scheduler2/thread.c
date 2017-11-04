@@ -3,6 +3,7 @@
 #include "thread.h"
 #include "process.h"
 #include "thread_stack_frame.h"
+#include "thread_queue/thread_queue.h"
 #include "../PagingManager/paging.h"
 #include "../PageAllocator/pageAllocator.h"
 
@@ -24,7 +25,7 @@ thread_t create_thread(void * code, process_t process)
 
   ret->tid = 0;
   ret->process = process;
-  offer_thread_queue(process->threads, ret);
+  offer_thread_queue(process->threads, ret, NULL);
   ret->state = THREAD_READY;
   ret->code = code;
   ret->stack = to_stack_start(allocatePage());

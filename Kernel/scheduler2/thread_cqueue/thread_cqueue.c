@@ -34,6 +34,12 @@ thread_cqueue_t new_thread_cqueue()
   return ret;
 }
 
+
+int free_thread_cqueue(thread_cqueue_t tq)
+{
+  return 1;
+}
+
 int offer_thread_cqueue(thread_cqueue_t tq, thread_t thread)
 {
   thread_cqueue_node_t new_node = (thread_cqueue_node_t)k_malloc(sizeof(struct thread_cqueue_node));
@@ -93,6 +99,36 @@ thread_t peek_thread_cqueue(thread_cqueue_t tq)
   if(tq->first == NULL)
     return NULL;
   return tq->first->thread;
+}
+
+
+int remove_thread_cqueue(thread_cqueue_t tq, thread_t thread)
+{
+  thread_cqueue_node_t curr = tq->first;
+
+  do {
+    if(curr->thread->tid == thread->tid) {
+      if(curr == tq->first && curr == tq->last) {
+        tq->first = NULL;
+        tq->last = NULL;
+      } else if(curr == tq->first) {
+        tq->first = tq->first->next;
+        tq->last->next = tq->first;
+        tq->first->prev = tq->last;
+      } else if(curr == tq->last) {
+        tq->last = tq->last->prev;
+        tq->last->next = tq->first;
+        tq->first->prev = tq->last;
+      } else {
+        curr->next->prev = curr->prev;
+        curr->prev->next = curr->next;
+      }
+      return 1;
+    } else {
+      curr = curr->next;
+    }
+  } while(curr != tq->first);
+  return -1;
 }
 
 int rotate_thread_cqueue(thread_cqueue_t tq)

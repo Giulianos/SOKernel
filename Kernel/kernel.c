@@ -44,12 +44,12 @@ int main()
 	k_log("Creating init process...\n");
 	aux_process = create_process(1, 0, 0, 0);
 	add_scheduler(get_main_thread_process(aux_process));
-	/*k_log("Creating shells...\n");
+	k_log("Creating shells...\n");
 	for(;i<7; i++) {
 		k_log("Creating sh for tty%d\n", i+1);
 		aux_process = create_process(2, 0, i, 0);
 		add_scheduler(get_main_thread_process(aux_process));
-	}*/
+	}
 	schedule_scheduler();
 	configureInterrupts();
 	switchToProcess();

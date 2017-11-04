@@ -10,5 +10,7 @@
   thread_t poll_thread_cqueue(thread_cqueue_t tq);
   thread_t peek_thread_cqueue(thread_cqueue_t tq);
   int rotate_thread_cqueue(thread_cqueue_t tq);
+  int free_thread_cqueue(thread_cqueue_t tq);
+  int remove_thread_cqueue(thread_cqueue_t tq, thread_t thread);
 
 #endif

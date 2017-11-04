@@ -21,7 +21,7 @@ process_t create_process(int module, int ppid, int vt_id, int flags)
 	loadModule((unsigned char)module, ret->code);
 
 	ret->threads = new_thread_queue();
-	offer_thread_queue(ret->threads, create_thread(ret->code, ret));
+	offer_thread_queue(ret->threads, create_thread(ret->code, ret), NULL);
 
 	k_log("Process with pid:%d has been created!\n", ret->pid);
 
