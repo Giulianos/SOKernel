@@ -42,8 +42,7 @@ process_t clone_process(process_t process, thread_t calling_thread)
 	ret->code = allocatePage();
   ret->heap = NULL;
 
-	k_memcpy((void *)ret->code, process->code, pageSize());
-
+	k_memcpy(ret->code, process->code, pageSize());
 	ret->threads = new_thread_queue();
 	clone_thread(calling_thread, ret);
 	#ifdef PROCESS_DEBUG_MSG
@@ -51,6 +50,17 @@ process_t clone_process(process_t process, thread_t calling_thread)
 	#endif
 
 	return ret;
+}
+
+void replace_process_image(process_t process, int module)
+{
+	/* We replace the module loaded */
+	loadModule((unsigned char)module, process->code);
+	/* Then, freeing the thread-list terminates all process threads */
+	free_thread_queue(process->threads);
+	/* Finally we create a new thread-list and add a new thread */
+	process->threads = new_thread_queue();
+	create_thread(get_logical_userland_page(), process);
 }
 
 void kill_process(process_t process)

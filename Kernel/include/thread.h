@@ -1,8 +1,6 @@
 #ifndef THREAD_H
 #define THREAD_H
 
-  #include "thread_stack_frame.h"
-
   #define THREAD_READY 1
   #define THREAD_BLOCKED 2
 
@@ -24,6 +22,5 @@
   thread_t create_thread(void * code, process_t process);
   thread_t clone_thread(thread_t thread, process_t owner_process);
   int get_vt_thread(thread_t thread);
-  thread_stack_frame_t * get_stack_frame_thread(thread_t thread);
 
 #endif

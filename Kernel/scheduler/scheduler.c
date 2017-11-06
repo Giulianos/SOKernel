@@ -14,6 +14,7 @@ static int current_pid_scheduler;
 
 int get_new_pid_scheduler();
 int get_new_tid_scheduler();
+#define SCHEDULER_DEBUG_MSG
 
 int init_scheduler()
 {
@@ -45,11 +46,13 @@ int add_scheduler(thread_t thread)
 
 void schedule_scheduler()
 {
+  k_log("thread preemted, rip saved:%x\n", get_stack_frame_thread(current_thread_scheduler)->rip);
   rotate_thread_cqueue(ready_queue_scheduler);
   current_thread_scheduler = peek_thread_cqueue(ready_queue_scheduler);
   map_process(current_thread_scheduler->process->code);
   #ifdef SCHEDULER_DEBUG_MSG
   k_log("Scheduled! Next thread has tid:%d\n", current_thread_scheduler->tid);
+  k_log("rip will be:%x\n", get_stack_frame_thread(current_thread_scheduler)->rip);
   #endif
 }
 
@@ -116,6 +119,7 @@ int block_thread(thread_t thread, int queue, void * extra_info)
   {
     remove_thread_cqueue(ready_queue_scheduler, thread);
     schedule_scheduler();
+    k_log("%d was blocked!\n", thread->tid);
     return 1;
   }
   #ifdef SCHEDULER_DEBUG_MSG
@@ -145,8 +149,14 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
   callback(extra_info);
   unblocked_thread = poll_thread_queue(blocked_queue);
 
+  if(unblocked_thread == NULL) {
+    k_log("There aren't blocked threads to unblock!\n");
+    return -1;
+  }
+
   if(add_scheduler(unblocked_thread)>0) {
     return 1;
+    k_log("%d was unblocked!\n", unblocked_thread->tid);
   }
 
   #ifdef SCHEDULER_DEBUG_MSG

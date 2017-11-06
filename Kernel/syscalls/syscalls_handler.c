@@ -4,14 +4,16 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
 {
   switch(rax)
   {
+    case SYSCALL_EXIT:
+    return (uint64_t)syscall_exit();
+    case SYSCALL_FORK:
+      return (uint64_t)syscall_fork();
     case SYSCALL_READ:
       return (uint64_t)syscall_read((int)rbx, (char *)rcx, (size_t)rdx);
     case SYSCALL_WRITE:
       return (uint64_t)syscall_write((int)rbx, (char *)rcx, (size_t)rdx);
     case SYSCALL_EXECVE:
       return (uint64_t)syscall_execve((int)rbx);
-    case SYSCALL_EXIT:
-      return (uint64_t)syscall_exit();
     case SYSCALL_WAIT:
       return (uint64_t)syscall_wait(rbx);
     case SYSCALL_YIELD:

@@ -5,6 +5,7 @@
   #include <stdint.h>
 
   #define SYSCALL_EXIT 0x01
+  #define SYSCALL_FORK 0x02
   #define SYSCALL_READ 0x03
   #define SYSCALL_WRITE 0x04
   #define SYSCALL_WAIT 0x07

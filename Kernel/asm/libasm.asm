@@ -4,6 +4,7 @@ global cli
 global reloadCR3
 global switch_to_process
 global getSampleRFLAGS
+global halt_cpu
 
 extern process_context_switch
 
@@ -42,6 +43,10 @@ sti:
 cli:
 	cli
 	ret
+
+halt_cpu:
+	hlt
+	ret;
 
 reloadCR3:
 	mov rax, cr3

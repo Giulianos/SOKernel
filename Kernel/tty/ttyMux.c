@@ -73,6 +73,13 @@ void keyPressed_tty(keycode_t key) //esto se hace en la terminal activa
   keyPressed_vterm(vt[active_vt_id], key);
   flip_tty();
 }
+extern void halt_cpu();
+void switch_to_kernel_log_tty()
+{
+  k_log("Exception!\n");
+  active_vt_id = 7; flip_tty();
+  while(1) { halt_cpu(); }
+}
 
 void k_log_putchar(void * p, char c)
 {

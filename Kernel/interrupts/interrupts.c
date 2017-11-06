@@ -17,6 +17,7 @@ extern void keyboardHandler();
 extern void systemCallHandler();
 extern void spuriousInt7Handler();
 extern void spuriousInt15Handler();
+extern void switch_to_kernel_log_tty();
 
 static void writePICMask(uint16_t mask);
 static void setIDTEntry(uint16_t entry, uint64_t offset);
@@ -35,6 +36,10 @@ void configureInterrupts()
   setIDTEntry(0x80, (uint64_t)systemCallHandler);
   setIDTEntry(0x27, (uint64_t)spuriousInt7Handler);
   setIDTEntry(0x2F, (uint64_t)spuriousInt15Handler);
+  setIDTEntry(0x0b, (uint64_t)switch_to_kernel_log_tty);
+  setIDTEntry(0x0c, (uint64_t)switch_to_kernel_log_tty);
+  setIDTEntry(0x0d, (uint64_t)switch_to_kernel_log_tty);
+  setIDTEntry(0x0e, (uint64_t)switch_to_kernel_log_tty);
   sti();//Habilito las interrupciones
 }
 

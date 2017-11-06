@@ -8,8 +8,10 @@ extern uint64_t systemCall(uint64_t eax, uint64_t rbx, uint64_t rcx, uint64_t rd
 extern void putc ( void* p, char c);
 
 char parse_command(char * input);
-uint64_t execve(int id);
+int execve(int id);
+int fork();
 void wait(uint64_t pid);
+void exit();
 
 int main()
 {
@@ -25,33 +27,53 @@ int main()
 
 char parse_command(char * input)
 {
-	uint64_t child_pid;
+	int child_pid;
 
 	if(strcmp(input, "help") == 0) {
-		child_pid = execve(3);
-		wait(child_pid);
+		child_pid = fork();
+
+		if(child_pid == 0)
+			execve(3);
+		//wait(child_pid);
+		printf("child_pid=%d\n", child_pid);
+		while(1) {}
 		return 1;
 	}
 	if(strcmp(input, "ps") == 0) {
-		child_pid = execve(4);
-		wait(child_pid);
+		child_pid = fork();
+		if(!child_pid) {
+			execve(4);
+		}
+		//wait(child_pid);
 		return 1;
 	}
 	if(strcmp(input, "sample") == 0) {
-		child_pid = execve(5);
-		wait(child_pid);
+		child_pid = fork();
+		if(!child_pid) {
+			execve(5);
+		}
+		//wait(child_pid);
 		return 1;
 	}
 	if(strcmp(input, "help&") == 0) {
-		child_pid = execve(3);
+		child_pid = fork();
+		if(!child_pid) {
+			execve(3);
+		}
 		return 1;
 	}
 	if(strcmp(input, "ps&") == 0) {
-		child_pid = execve(4);
+		child_pid = fork();
+		if(!child_pid) {
+			execve(4);
+		}
 		return 1;
 	}
 	if(strcmp(input, "sample&") == 0) {
-		child_pid = execve(5);
+		child_pid = fork();
+		if(!child_pid) {
+			execve(5);
+		}
 		return 1;
 	}
 
@@ -64,7 +86,17 @@ void wait(uint64_t pid)
 	systemCall(0x07, pid, 0, 0, 0, 0);
 }
 
-uint64_t execve(int id)
+void exit()
 {
-	return systemCall(0x0B, id, 0, 0, 0, 0);
+	systemCall(0x01, 0, 0, 0, 0, 0);
+}
+
+int fork()
+{
+	return (int)systemCall(0x02, 0, 0, 0, 0, 0);
+}
+
+int execve(int id)
+{
+	return (int)systemCall(0x0B, id, 0, 0, 0, 0);
 }

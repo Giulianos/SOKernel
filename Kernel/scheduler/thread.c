@@ -6,9 +6,12 @@
 #include "thread_queue/thread_queue.h"
 #include <paging.h>
 #include <page_allocator.h>
+#include <stddef.h>
+
+#define THREAD_DEBUG_MSG
 
 static void * setup_stack_frame_thread(thread_t thread);
-static void clone_thread_stack(thread_t src_thread, thread_t dest_src);
+static void clone_thread_stack(thread_t src_thread, thread_t dst_src);
 static void * to_stack_start(void * stack);
 
 thread_t create_thread(void * code, process_t process)
@@ -37,7 +40,6 @@ thread_t create_thread(void * code, process_t process)
   ret->stack_page = allocatePage();
   ret->stack = to_stack_start(ret->stack_page);
   ret->stack = setup_stack_frame_thread(ret);
-
   #ifdef THREAD_DEBUG_MSG
   k_log("Thread with tid:%d has been created!\n", ret->tid);
   k_log("Stack is at %x\n", ret->stack);
@@ -73,20 +75,30 @@ thread_t clone_thread(thread_t thread, process_t owner_process)
 
   #ifdef THREAD_DEBUG_MSG
   k_log("Thread with tid:%d has been created!\n", ret->tid);
+  k_log("Stack was at %x\n", thread->stack);
   k_log("Stack is at %x\n", ret->stack);
+  k_log("Code was at %x\n", thread->code);
+  k_log("Code is at %x\n", ret->code);
   #endif
 
   return ret;
 }
 
-void clone_thread_stack(thread_t src_thread, thread_t dest_src)
+void clone_thread_stack(thread_t src_thread, thread_t dst_thread)
 {
-  dest_src->stack_page = allocatePage();
+  thread_stack_frame_t * dst_stack_frame;
+  thread_stack_frame_t * src_stack_frame;
 
-  k_memcpy(dest_src->stack_page, src_thread->stack_page, pageSize());
-  dest_src->stack = (void *)( (char *)dest_src->stack_page +
-                              (size_t)((char *)src_thread->stack -
-                              (char *)src_thread->stack_page) );
+  dst_thread->stack_page = allocatePage();
+  k_memcpy(dst_thread->stack_page, src_thread->stack_page, pageSize());
+
+  dst_stack_frame = get_stack_frame_thread(dst_thread);
+  src_stack_frame = get_stack_frame_thread(src_thread);
+
+  dst_thread->stack = translate_addr_page(src_thread->stack, dst_thread->stack_page);
+  dst_stack_frame->rip = (uint64_t)src_stack_frame->rip;
+  dst_stack_frame->rsp = (uint64_t)translate_addr_page((void *)src_stack_frame->rsp, dst_thread->stack_page);
+  dst_stack_frame->rax = 0x0;
 }
 
 int get_vt_thread(thread_t thread)
@@ -94,6 +106,11 @@ int get_vt_thread(thread_t thread)
   if(thread == NULL)
     return -1;
   return thread->process->vt_id;
+}
+
+thread_stack_frame_t * get_stack_frame_thread(thread_t thread)
+{
+  return (thread_stack_frame_t *)((char *)thread->stack);
 }
 
 void * setup_stack_frame_thread(thread_t thread)
