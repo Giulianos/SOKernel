@@ -14,6 +14,9 @@ static int current_pid_scheduler;
 
 int get_new_pid_scheduler();
 int get_new_tid_scheduler();
+
+static void map_thread(thread_t thread);
+
 #define SCHEDULER_DEBUG_MSG
 
 int init_scheduler()
@@ -46,15 +49,23 @@ int add_scheduler(thread_t thread)
 
 void schedule_scheduler()
 {
-  k_log("thread preemted, rip saved:%x\n", get_stack_frame_thread(current_thread_scheduler)->rip);
+  k_log("thread preempted, rip saved:%x\n", get_stack_frame_thread(current_thread_scheduler)->rip);
   rotate_thread_cqueue(ready_queue_scheduler);
   current_thread_scheduler = peek_thread_cqueue(ready_queue_scheduler);
-  map_process(current_thread_scheduler->process->code);
+  map_thread(current_thread_scheduler);
   #ifdef SCHEDULER_DEBUG_MSG
   k_log("Scheduled! Next thread has tid:%d\n", current_thread_scheduler->tid);
   k_log("rip will be:%x\n", get_stack_frame_thread(current_thread_scheduler)->rip);
+  k_log("rsp will be:%x\n", get_stack_frame_thread(current_thread_scheduler)->rsp);
   #endif
 }
+
+void map_thread(thread_t thread)
+{
+  map_physical(get_logical_userland_stack_page() ,thread->stack_page);
+  map_process(thread->process->code);
+}
+
 
 int get_new_tid_scheduler()
 {
@@ -107,7 +118,7 @@ int block_thread(thread_t thread, int queue, void * extra_info)
   /* First we check if the blocked queue exists */
   if(blocked_queue == NULL)
   {
-    #ifdef SCHEDULER_DEBUG_MSG
+    #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("%d couldn't be blocked because the queue doesn't exist!\n", thread->tid);
     #endif
     return -1;
@@ -122,7 +133,7 @@ int block_thread(thread_t thread, int queue, void * extra_info)
     k_log("%d was blocked!\n", thread->tid);
     return 1;
   }
-  #ifdef SCHEDULER_DEBUG_MSG
+  #ifdef SCHEDULER_BLOCK_DEBUG_MSG
   k_log("%d couldn't be blocked!\n", thread->tid);
   #endif
   return -1;
@@ -139,15 +150,19 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
   /* First we check if the blocked queue exists */
   if(blocked_queue == NULL)
   {
-    #ifdef SCHEDULER_DEBUG_MSG
+    #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("Couldn't unblock thread because the queue doesn't exist!\n");
     #endif
     return -1;
   }
 
   extra_info = peek_extra_info_thread_queue(blocked_queue);
-  callback(extra_info);
   unblocked_thread = poll_thread_queue(blocked_queue);
+  //We map the thread (in case the callback needs to access the thread memory)
+  map_thread(unblocked_thread);
+  callback(extra_info);
+  //Then we map back the current thread
+  map_thread(current_thread_scheduler);
 
   if(unblocked_thread == NULL) {
     k_log("There aren't blocked threads to unblock!\n");

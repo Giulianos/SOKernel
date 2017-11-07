@@ -40,6 +40,7 @@ thread_t create_thread(void * code, process_t process)
   ret->stack_page = allocatePage();
   ret->stack = to_stack_start(ret->stack_page);
   ret->stack = setup_stack_frame_thread(ret);
+  ret->stack = translate_addr_page(ret->stack, get_logical_userland_stack_page());
   #ifdef THREAD_DEBUG_MSG
   k_log("Thread with tid:%d has been created!\n", ret->tid);
   k_log("Stack is at %x\n", ret->stack);
@@ -51,6 +52,7 @@ thread_t create_thread(void * code, process_t process)
 thread_t clone_thread(thread_t thread, process_t owner_process)
 {
   thread_t ret = (thread_t)k_malloc(sizeof(struct thread));
+  thread_stack_frame_t * new_stack_frame;
 
   if(ret == NULL) {
     #ifdef THREAD_DEBUG_MSG
@@ -71,7 +73,11 @@ thread_t clone_thread(thread_t thread, process_t owner_process)
   ret->state = THREAD_READY;
   ret->blocked_queue = -1;
   ret->code = thread->code;
+  ret->stack_page = allocatePage();
   clone_thread_stack(thread, ret);
+  ret->stack = thread->stack; //The rsp will be the same as it's mapped before running
+  new_stack_frame = (thread_stack_frame_t *)(translate_addr_page(ret->stack, ret->stack_page));
+  new_stack_frame->rax = 0x0; //We return 0x0 while cloning
 
   #ifdef THREAD_DEBUG_MSG
   k_log("Thread with tid:%d has been created!\n", ret->tid);
@@ -86,19 +92,9 @@ thread_t clone_thread(thread_t thread, process_t owner_process)
 
 void clone_thread_stack(thread_t src_thread, thread_t dst_thread)
 {
-  thread_stack_frame_t * dst_stack_frame;
-  thread_stack_frame_t * src_stack_frame;
+  thread_stack_frame_t * new_stack_frame = (thread_stack_frame_t *)(translate_addr_page(dst_thread->stack, dst_thread->stack_page));
 
-  dst_thread->stack_page = allocatePage();
   k_memcpy(dst_thread->stack_page, src_thread->stack_page, pageSize());
-
-  dst_stack_frame = get_stack_frame_thread(dst_thread);
-  src_stack_frame = get_stack_frame_thread(src_thread);
-
-  dst_thread->stack = translate_addr_page(src_thread->stack, dst_thread->stack_page);
-  dst_stack_frame->rip = (uint64_t)src_stack_frame->rip;
-  dst_stack_frame->rsp = (uint64_t)translate_addr_page((void *)src_stack_frame->rsp, dst_thread->stack_page);
-  dst_stack_frame->rax = 0x0;
 }
 
 int get_vt_thread(thread_t thread)
@@ -120,7 +116,7 @@ void * setup_stack_frame_thread(thread_t thread)
 	stack->rip = (uint64_t)thread->code;
 	stack->cs = 0x08;
 	stack->rflags = 0x202;
-	stack->rsp = (uint64_t)&(stack->base);
+	stack->rsp = (uint64_t)translate_addr_page((void *)&(stack->base), get_logical_userland_stack_page());
 	stack->ss = 0x00;
 	stack->base = 0x00;
 	stack->r15 = 0x00;

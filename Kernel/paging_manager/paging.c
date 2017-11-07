@@ -3,7 +3,7 @@
 #include "paging.h"
 
 #define USERLAND_LOGIC_PAGE 0x1FE00000
-#define USERLAND_STACK_LOGIC_PAGE 0x1FC00000
+#define USERLAND_STACK_LOGIC_PAGE 0x20000000
 
 extern void reloadCR3();
 

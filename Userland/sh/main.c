@@ -16,6 +16,7 @@ void exit();
 int main()
 {
 	char input[80];
+
 	init_printf(0, putc);
 	while(1) {
 		printf(">");
@@ -31,12 +32,12 @@ char parse_command(char * input)
 
 	if(strcmp(input, "help") == 0) {
 		child_pid = fork();
-
 		if(child_pid == 0)
-			execve(3);
-		//wait(child_pid);
-		printf("child_pid=%d\n", child_pid);
-		while(1) {}
+		{
+			printf("Soy child!");
+			exit();
+		}
+		printf("Soy parent!");
 		return 1;
 	}
 	if(strcmp(input, "ps") == 0) {
