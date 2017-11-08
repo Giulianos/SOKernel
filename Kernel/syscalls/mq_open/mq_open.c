@@ -1,5 +1,5 @@
 #include <lib.h>
-#include "../../ipc/message_queue.h"
+#include "../../ipc/message_queue/message_queue.h"
 
 int syscall_mq_open(char * mq_name)
 {
