@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <lib.h>
 
+#define SCHEDULER_BLOCK_DEBUG_MSG
+
 static thread_cqueue_t ready_queue_scheduler;
 static thread_t current_thread_scheduler;
 static int current_tid_scheduler;
@@ -160,18 +162,18 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
 
   extra_info = peek_extra_info_thread_queue(blocked_queue);
   unblocked_thread = poll_thread_queue(blocked_queue);
-  //We map the thread (in case the callback needs to access the thread memory)
-  map_thread(unblocked_thread);
-  callback(extra_info);
-  //Then we map back the current thread
-  map_thread(current_thread_scheduler);
-
   if(unblocked_thread == NULL) {
     #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("There aren't blocked threads to unblock!\n");
     #endif
     return -1;
   }
+  //We map the thread (in case the callback needs to access the thread memory)
+  map_thread(unblocked_thread);
+  callback(extra_info);
+  //Then we map back the current thread
+  map_thread(current_thread_scheduler);
+
 
   if(add_scheduler(unblocked_thread)>0) {
     return 1;

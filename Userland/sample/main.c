@@ -38,19 +38,17 @@ int main()
 	gets(buf);
 	if(strcmp("2", buf)==0)
 	{
-		mq_send("chat", "hola", 4);
-		printf("sent: hola");
-		mq_send("chat", "como", 4);
-		printf("sent: como");
-		mq_send("chat", "va??", 4);
-		printf("sent: va??");
+		while(1) {
+			printf("escriba su mensaje\n");
+			gets(buf);
+			mq_send("chat", buf, strlen(buf)+1);
+			printf("sent %s\n", buf);
+		}
 	} else {
-		aux = mq_receive("chat", buf, 255);
-		printf("received: %s\n", buf);
-		aux = mq_receive("chat", buf, 255);
-		printf("received: %s\n", buf);
-		aux = mq_receive("chat", buf, 255);
-		printf("received: %s\n", buf);
+		while(1) {
+			aux = mq_receive("chat", buf, 255);
+			printf("received: %s\n", buf);
+		}
 	}
 
 	return 0;
