@@ -87,6 +87,11 @@ int read_message_queue(message_queue_t mq, char * buf, size_t count)
   return count;
 }
 
+int get_id_message_queue(message_queue_t mq)
+{
+  return mq->id;
+}
+
 const char * get_id_str_message_queue(message_queue_t mq)
 {
   return (const char *)mq->id_str;

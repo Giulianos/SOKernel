@@ -17,8 +17,6 @@ int get_new_tid_scheduler();
 
 static void map_thread(thread_t thread);
 
-#define SCHEDULER_DEBUG_MSG
-
 int init_scheduler()
 {
   ready_queue_scheduler = new_thread_cqueue();
@@ -49,7 +47,9 @@ int add_scheduler(thread_t thread)
 
 void schedule_scheduler()
 {
+  #ifdef SCHEDULER_DEBUG_MSG
   k_log("thread preempted, rip saved:%x\n", get_stack_frame_thread(current_thread_scheduler)->rip);
+  #endif
   rotate_thread_cqueue(ready_queue_scheduler);
   current_thread_scheduler = peek_thread_cqueue(ready_queue_scheduler);
   map_thread(current_thread_scheduler);
@@ -130,7 +130,9 @@ int block_thread(thread_t thread, int queue, void * extra_info)
   {
     remove_thread_cqueue(ready_queue_scheduler, thread);
     schedule_scheduler();
+    #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("%d was blocked!\n", thread->tid);
+    #endif
     return 1;
   }
   #ifdef SCHEDULER_BLOCK_DEBUG_MSG
@@ -165,13 +167,17 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
   map_thread(current_thread_scheduler);
 
   if(unblocked_thread == NULL) {
+    #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("There aren't blocked threads to unblock!\n");
+    #endif
     return -1;
   }
 
   if(add_scheduler(unblocked_thread)>0) {
     return 1;
+    #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("%d was unblocked!\n", unblocked_thread->tid);
+    #endif
   }
 
   #ifdef SCHEDULER_DEBUG_MSG

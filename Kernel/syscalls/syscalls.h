@@ -17,6 +17,10 @@
   #define SYSCALL_GETKEYSTATE 0x47
   #define SYSCALL_YIELD 0x48
   #define SYSCALL_PS 0x49
+  #define SYSCALL_MQ_OPEN 0x115
+  #define SYSCALL_MQ_UNLINK 0x116
+  #define SYSCALL_MQ_SEND 0x117
+  #define SYSCALL_MQ_RECEIVE 0x118
 
   uint64_t syscall_execve(int module_number);
   void * syscall_sbrk();
@@ -27,5 +31,9 @@
   int syscall_wait(uint64_t pid);
   int syscall_yield();
   int syscall_fork();
+  int syscall_mq_unlink(char * mq_name);
+  int syscall_mq_send(char * mq_name, char * msg, size_t len);
+  int syscall_mq_receive(char * mq_name, char * buf, size_t len);
+  int syscall_mq_open(char * mq_name);
 
 #endif

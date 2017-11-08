@@ -92,8 +92,6 @@ thread_t clone_thread(thread_t thread, process_t owner_process)
 
 void clone_thread_stack(thread_t src_thread, thread_t dst_thread)
 {
-  thread_stack_frame_t * new_stack_frame = (thread_stack_frame_t *)(translate_addr_page(dst_thread->stack, dst_thread->stack_page));
-
   k_memcpy(dst_thread->stack_page, src_thread->stack_page, pageSize());
 }
 

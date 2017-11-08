@@ -11,6 +11,7 @@
   int free_message_queue(message_queue_t mq);
   int add_message_queue(message_queue_t mq);
   const char * get_id_str_message_queue(message_queue_t mq);
+  int get_id_message_queue(message_queue_t mq);
   message_queue_t get_message_queue(const char * id_str);
   void remove_message_queue(const char * id_str);
 

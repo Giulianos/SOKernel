@@ -34,7 +34,7 @@ void * initializeKernelBinary()
 
 int main()
 {
-	int i=0;
+	int i=2;
 	process_t aux_process;
 	init_scheduler();
 	init_tty();
@@ -51,6 +51,10 @@ int main()
 	#ifdef KERNEL_INIT_DEBUG_MSG
 	k_log("Creating shells...\n");
 	#endif
+	aux_process = create_process(5, 0, 0, 0);
+	add_scheduler(get_main_thread_process(aux_process));
+	aux_process = create_process(5, 0, 1, 0);
+	add_scheduler(get_main_thread_process(aux_process));
 	for(;i<7; i++) {
 		#ifdef KERNEL_INIT_DEBUG_MSG
 		k_log("Creating sh for tty%d\n", i+1);
