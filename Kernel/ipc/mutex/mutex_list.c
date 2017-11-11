@@ -14,8 +14,8 @@ struct mutex_node
 static mutex_node_t first = NULL;
 static mutex_node_t last = NULL;
 
-mutex_t get_recursive_mutex(int id, mutex_node_t node);
-void remove_recursive_mutex(int id, mutex_node_t node);
+mutex_t get_recursive_mutex(const char * id_str, mutex_node_t node);
+void remove_recursive_mutex(const char * id_str, mutex_node_t node);
 
 int add_mutex(mutex_t mx)
 {
@@ -41,35 +41,35 @@ int add_mutex(mutex_t mx)
   return 1;
 }
 
-mutex_t get_mutex(int id)
+mutex_t get_mutex(const char * id_str)
 {
-  return get_recursive_mutex(id, first);
+  return get_recursive_mutex(id_str, first);
 }
 
-mutex_t get_recursive_mutex(int id,mutex_node_t node)
+mutex_t get_recursive_mutex(const char * id_str, mutex_node_t node)
 {
   if(node == NULL)
     return NULL;
 
-  if(id == get_id_mutex(node->mx))
+  if(k_strcmp(id_str, get_id_str_mutex(node->mx)) == 0)
     return node->mx;
 
-  return get_recursive_mutex(id, node->next);
+  return get_recursive_mutex(id_str, node->next);
 }
 
-void remove_mutex(int id)
+void remove_mutex(const char * id_str)
 {
-  remove_recursive_mutex(id, first);
+  remove_recursive_mutex(id_str, first);
 }
 
-void remove_recursive_mutex(int id,mutex_node_t node)
+void remove_recursive_mutex(const char * id_str, mutex_node_t node)
 {
- mutex_node_t aux;
+  mutex_node_t aux;
 
   if(node == NULL)
     return;
 
-  if(id == get_id_mutex(node->mx)) {
+  if(k_strcmp(id_str, get_id_str_mutex(node->mx)) == 0) {
     aux = node;
     if(node == first && node == last) {
       first = NULL;
@@ -89,5 +89,5 @@ void remove_recursive_mutex(int id,mutex_node_t node)
     return;
   }
 
-  remove_recursive_mutex(id, node->next);
+  remove_recursive_mutex(id_str, node->next);
 }

@@ -42,7 +42,7 @@ message_queue_t new_message_queue(char * id_str)
   message_queue_t ret = (message_queue_t)k_malloc(sizeof(struct message_queue));
 
   ret->id = current_message_queue_id++;
-  k_memcpy( (void *)ret->id_str,
+  k_strncpy( (void *)ret->id_str,
             (void *)id_str,
             MSG_QUEUE_IDSTR_LEN );
   ret->msg_quantity = 0;

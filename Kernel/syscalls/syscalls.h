@@ -21,6 +21,12 @@
   #define SYSCALL_MQ_UNLINK 0x116
   #define SYSCALL_MQ_SEND 0x117
   #define SYSCALL_MQ_RECEIVE 0x118
+  #define SYSCALL_MX_CREATE 0x120
+  #define SYSCALL_MX_LOCK 0x121
+  #define SYSCALL_MX_UNLOCK 0x122
+  #define SYSCALL_SEM_CREATE 0x130
+  #define SYSCALL_SEM_WAIT 0x131
+  #define SYSCALL_SEM_SIGNAL 0x132
 
   uint64_t syscall_execve(int module_number);
   void * syscall_sbrk();
@@ -35,5 +41,12 @@
   int syscall_mq_send(char * mq_name, char * msg, size_t len);
   int syscall_mq_receive(char * mq_name, char * buf, size_t len);
   int syscall_mq_open(char * mq_name);
+  int syscall_mx_create(char * id_str);
+  int syscall_mx_lock(char * id_str);
+  int syscall_mx_unlock(char * id_str);
+  int syscall_sem_create(int initial_value, char * id_str);
+  int syscall_sem_wait(char * id_str);
+  int syscall_sem_signal(char * id_str);
+
 
 #endif

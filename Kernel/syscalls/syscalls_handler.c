@@ -30,6 +30,18 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
       return (uint64_t)syscall_mq_send((char *)rbx, (char *)rcx, (size_t)rdx);
     case SYSCALL_MQ_RECEIVE:
       return (uint64_t)syscall_mq_receive((char *)rbx, (char *)rcx, (size_t)rdx);
+    case SYSCALL_MX_CREATE:
+      return (uint64_t)syscall_mx_create((char *)rbx);
+    case SYSCALL_MX_LOCK:
+      return (uint64_t)syscall_mx_lock((char *)rbx);
+    case SYSCALL_MX_UNLOCK:
+      return (uint64_t)syscall_mx_unlock((char *)rbx);
+    case SYSCALL_SEM_CREATE:
+      return (uint64_t)syscall_sem_create((int)rcx, (char *)rbx);
+    case SYSCALL_SEM_WAIT:
+      return (uint64_t)syscall_sem_wait((char *)rbx);
+    case SYSCALL_SEM_SIGNAL:
+      return (uint64_t)syscall_sem_signal((char *)rbx);
   }
   return 0;
 }
