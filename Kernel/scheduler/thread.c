@@ -8,7 +8,7 @@
 #include <page_allocator.h>
 #include <stddef.h>
 
-#define THREAD_DEBUG_MSG
+//#define THREAD_DEBUG_MSG
 
 static void * setup_stack_frame_thread(thread_t thread);
 static void clone_thread_stack(thread_t src_thread, thread_t dst_src);

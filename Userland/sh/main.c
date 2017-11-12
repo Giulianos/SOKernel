@@ -10,7 +10,7 @@ extern void putc ( void* p, char c);
 char parse_command(char * input);
 int execve(int id);
 int fork();
-void wait(uint64_t pid);
+void wait(int pid);
 void exit();
 
 int main()
@@ -34,57 +34,20 @@ char parse_command(char * input)
 		child_pid = fork();
 		if(child_pid == 0)
 		{
-			printf("Soy child!");
+			printf("Aca va la informacion de ayuda\n");
 			exit();
-		}
-		printf("Soy parent!");
-		return 1;
-	}
-	if(strcmp(input, "ps") == 0) {
-		child_pid = fork();
-		if(!child_pid) {
-			execve(4);
-		}
-		//wait(child_pid);
-		return 1;
-	}
-	if(strcmp(input, "sample") == 0) {
-		child_pid = fork();
-		if(!child_pid) {
-			execve(5);
-		}
-		//wait(child_pid);
-		return 1;
-	}
-	if(strcmp(input, "help&") == 0) {
-		child_pid = fork();
-		if(!child_pid) {
-			execve(3);
-		}
-		return 1;
-	}
-	if(strcmp(input, "ps&") == 0) {
-		child_pid = fork();
-		if(!child_pid) {
-			execve(4);
-		}
-		return 1;
-	}
-	if(strcmp(input, "sample&") == 0) {
-		child_pid = fork();
-		if(!child_pid) {
-			execve(5);
+		} else {
+			wait(child_pid);
 		}
 		return 1;
 	}
 
 	return 0;
-
 }
 
-void wait(uint64_t pid)
+void wait(int pid)
 {
-	systemCall(0x07, pid, 0, 0, 0, 0);
+	systemCall(0x07, (uint64_t)pid, 0, 0, 0, 0);
 }
 
 void exit()

@@ -15,7 +15,7 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
     case SYSCALL_EXECVE:
       return (uint64_t)syscall_execve((int)rbx);
     case SYSCALL_WAIT:
-      return (uint64_t)syscall_wait(rbx);
+      return (uint64_t)syscall_wait((int)rbx);
     case SYSCALL_YIELD:
       return (uint64_t)syscall_yield();
     case SYSCALL_PS:

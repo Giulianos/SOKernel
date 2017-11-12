@@ -16,6 +16,7 @@
     void * code;
     pagemap_list_t heap;
     thread_queue_t threads;
+    int waiting_queue_id; /*threads waiting for this process*/
   };
 
   process_t create_process(int module, int ppid, int vt_id, int flags);

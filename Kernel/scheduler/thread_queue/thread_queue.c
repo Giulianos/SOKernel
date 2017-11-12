@@ -109,7 +109,7 @@ thread_t poll_thread_queue(thread_queue_t tq)
     tq->first->prev = NULL;
   }
 
-  tq->size++;
+  tq->size--;
 
   return ret;
 }

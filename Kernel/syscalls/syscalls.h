@@ -34,7 +34,7 @@
   int syscall_exit();
   int syscall_read(int fd, char * buff, size_t count);
   int syscall_write(int fd, char * buff, size_t count);
-  int syscall_wait(uint64_t pid);
+  int syscall_wait(int pid);
   int syscall_yield();
   int syscall_fork();
   int syscall_mq_unlink(char * mq_name);

@@ -1,5 +1,6 @@
 #include "thread_cqueue/thread_cqueue.h"
 #include "blocked_queue_list/blocked_queue_list.h"
+#include "process_list/process_list.h"
 #include "process.h"
 #include "thread.h"
 #include <page_allocator.h>
@@ -13,6 +14,7 @@ static thread_cqueue_t ready_queue_scheduler;
 static thread_t current_thread_scheduler;
 static int current_tid_scheduler;
 static int current_pid_scheduler;
+static process_list_t pl;
 
 int get_new_pid_scheduler();
 int get_new_tid_scheduler();
@@ -22,6 +24,7 @@ static void map_thread(thread_t thread);
 int init_scheduler()
 {
   ready_queue_scheduler = new_thread_cqueue();
+  pl = new_process_list();
   if(ready_queue_scheduler == NULL) {
     #ifdef SCHEDULER_DEBUG_MSG
     k_log("Couldn't allocate space for ready_queue\n");
@@ -99,7 +102,15 @@ int terminate_thread(thread_t thread)
   return 1;
 }
 
+process_list_t get_pl()
+{
+  return pl;
+}
 
+process_t get_process(pid_t pid)
+{
+  return get_process_list(pl, pid);
+}
 
 /* ---------------- Thread-blocking mechanism implementation ---------------- */
 
@@ -108,9 +119,9 @@ int create_blocked_queue()
   return new_blocked_queue();
 }
 
-int free_blocked_queue()
+int free_blocked_queue(int queue_id)
 {
-  return free_blocked_queue();
+  return remove_blocked_queue(queue_id);
 }
 
 int block_thread(thread_t thread, int queue, void * extra_info)
@@ -121,7 +132,7 @@ int block_thread(thread_t thread, int queue, void * extra_info)
   if(blocked_queue == NULL)
   {
     #ifdef SCHEDULER_BLOCK_DEBUG_MSG
-    k_log("%d couldn't be blocked because the queue doesn't exist!\n", thread->tid);
+    k_log("%d couldn't be blocked because the queue %d doesn't exist!\n", thread->tid, queue);
     #endif
     return -1;
   }
@@ -151,6 +162,8 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
   thread_t unblocked_thread;
   void * extra_info;
 
+  k_log("This call to unblock was runned while in proc %d\n", current_thread_scheduler->process->pid);
+
   /* First we check if the blocked queue exists */
   if(blocked_queue == NULL)
   {
@@ -168,18 +181,21 @@ int unblock_from_queue_thread(int queue, void(*callback)(void *))
     #endif
     return -1;
   }
-  //We map the thread (in case the callback needs to access the thread memory)
-  map_thread(unblocked_thread);
-  callback(extra_info);
-  //Then we map back the current thread
-  map_thread(current_thread_scheduler);
+
+  if(callback != NULL) {
+    //We map the thread (in case the callback needs to access the thread memory)
+    map_thread(unblocked_thread);
+    callback(extra_info);
+    //Then we map back the current thread
+    map_thread(current_thread_scheduler);
+  }
 
 
   if(add_scheduler(unblocked_thread)>0) {
-    return 1;
     #ifdef SCHEDULER_BLOCK_DEBUG_MSG
     k_log("%d was unblocked!\n", unblocked_thread->tid);
     #endif
+    return 1;
   }
 
   #ifdef SCHEDULER_DEBUG_MSG
