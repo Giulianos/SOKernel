@@ -1,7 +1,6 @@
 #include "../VideoDriver/driver.h"
 #include "vterm.h"
 #include "tty.h"
-#include "../scheduler/scheduler.h"
 
 #define KERNEL_LOG_VT 7
 
@@ -52,6 +51,11 @@ void flip_tty()
   if(!is_tty_initialized)
     return;
   cpytext_vterm(vt[active_vt_id], (void(*)(char, uint8_t, uint8_t, uint8_t))videoPutChar);
+}
+
+void set_fg_tty(int vterm_id, tid_t tid)
+{
+    set_fg_vterm(vt[vterm_id], tid);
 }
 
 void keyPressed_tty(keycode_t key) //esto se hace en la terminal activa

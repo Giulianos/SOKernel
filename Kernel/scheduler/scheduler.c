@@ -11,6 +11,7 @@
 #define SCHEDULER_BLOCK_DEBUG_MSG
 
 static thread_cqueue_t ready_queue_scheduler;
+static thread_queue_t suspended_queue_scheduler;
 static thread_t current_thread_scheduler;
 static int current_tid_scheduler;
 static int current_pid_scheduler;
@@ -24,6 +25,7 @@ static void map_thread(thread_t thread);
 int init_scheduler()
 {
   ready_queue_scheduler = new_thread_cqueue();
+  suspended_queue_scheduler = new_thread_queue();
   pl = new_process_list();
   if(ready_queue_scheduler == NULL) {
     #ifdef SCHEDULER_DEBUG_MSG
@@ -111,6 +113,26 @@ process_t get_process(pid_t pid)
 {
   return get_process_list(pl, pid);
 }
+
+/* ---------------- Thread-suspension mechanism implementation ---------------- */
+
+int suspend_thread(thread_t thread)
+{
+  if(offer_thread_queue(suspended_queue_scheduler, thread, NULL)>0)
+  {
+    remove_thread_cqueue(ready_queue_scheduler, thread);
+    schedule_scheduler();
+    #ifdef SCHEDULER_BLOCK_DEBUG_MSG
+    k_log("%d was suspended!\n", thread->tid);
+    #endif
+    return 1;
+  }
+  #ifdef SCHEDULER_BLOCK_DEBUG_MSG
+  k_log("%d couldn't be suspended!\n", thread->tid);
+  #endif
+  return -1;
+}
+
 
 /* ---------------- Thread-blocking mechanism implementation ---------------- */
 

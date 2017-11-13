@@ -8,7 +8,6 @@ extern void halt();
 extern void putc ( void* p, char c);
 
 int main() {
-	init_printf(0, putc);
 	while(1) {
 		halt();
 	}

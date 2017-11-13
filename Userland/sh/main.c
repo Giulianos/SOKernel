@@ -12,6 +12,9 @@ int execve(int id);
 int fork();
 void wait(int pid);
 void exit();
+void set_fg(int pid);
+int run_app(int number, int fg);
+
 
 int main()
 {
@@ -28,21 +31,49 @@ int main()
 
 char parse_command(char * input)
 {
-	int child_pid;
 
 	if(strcmp(input, "help") == 0) {
-		child_pid = fork();
-		if(child_pid == 0)
-		{
-			printf("Aca va la informacion de ayuda\n");
-			exit();
-		} else {
-			wait(child_pid);
-		}
-		return 1;
+		return run_app(3, 1);
+	}
+	if(strcmp(input, "help&") == 0) {
+		return run_app(3, 0);
+	}
+	if(strcmp(input, "producer") == 0) {
+		return run_app(5, 1);
+	}
+	if(strcmp(input, "producer&") == 0) {
+		return run_app(5, 0);
+	}
+	if(strcmp(input, "consumer") == 0) {
+		return run_app(6, 1);
+	}
+	if(strcmp(input, "consumer&") == 0) {
+		return run_app(6, 0);
 	}
 
 	return 0;
+}
+
+int run_app(int number, int fg)
+{
+	int child_pid = fork();
+	if(child_pid == 0)
+	{
+		execve(number);
+		exit();
+	} else {
+		if(fg) {
+			set_fg(child_pid);
+			wait(child_pid);
+			set_fg(-1);
+		}
+	}
+	return 1;
+}
+
+void set_fg(int pid)
+{
+	systemCall(0x150, (uint64_t)pid, 0, 0, 0, 0);
 }
 
 void wait(int pid)

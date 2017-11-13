@@ -2,7 +2,6 @@
 #include <lib.h>
 #include "vterm.h"
 #include "lockedQueue.h"
-#include "../scheduler/scheduler.h"
 #include "keyMapping.h"
 #include "buffer.h"
 
@@ -18,6 +17,7 @@ typedef struct vterm_concrete
   charattr_t text[TTY_TEXTSIZE];
   int cursor;
   unsigned char format;
+  tid_t fg_tid;
   int blocked_queue_id;
   unsigned char kbState;
   kbBuffer_t kbBuffer;
@@ -68,6 +68,11 @@ vterm_t new_vterm()
 void free_vterm(vterm_t vt)
 {
   k_free(vt);
+}
+
+void set_fg_vterm(vterm_t vt, tid_t tid)
+{
+  vt->fg_tid = tid;
 }
 
 void scroll_vterm(vterm_t vt)
@@ -154,7 +159,15 @@ void write_vterm(vterm_t vt, const char * buff, size_t count)
 
 int read_vterm(vterm_t vt, char * buff, size_t count)
 {
-  read_block_details_t details = (read_block_details_t)k_malloc(sizeof(struct read_block_details));
+  read_block_details_t details;
+
+  if(current_thread()->tid != vt->fg_tid) {
+    suspend_thread(current_thread());
+    return -1;
+  }
+
+  details = (read_block_details_t)k_malloc(sizeof(struct read_block_details));
+
   if(details == NULL) {
     #ifdef VTERM_DEBUG_MSG
     k_log("Error while reading from terminal\n");

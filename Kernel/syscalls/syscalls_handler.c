@@ -42,6 +42,8 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
       return (uint64_t)syscall_sem_wait((char *)rbx);
     case SYSCALL_SEM_SIGNAL:
       return (uint64_t)syscall_sem_signal((char *)rbx);
+    case SYSCALL_FG:
+      return (uint64_t)syscall_fg((int)rbx);
   }
   return 0;
 }

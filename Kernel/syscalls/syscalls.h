@@ -27,6 +27,7 @@
   #define SYSCALL_SEM_CREATE 0x130
   #define SYSCALL_SEM_WAIT 0x131
   #define SYSCALL_SEM_SIGNAL 0x132
+  #define SYSCALL_FG 0x150
 
   uint64_t syscall_execve(int module_number);
   void * syscall_sbrk();
@@ -47,6 +48,7 @@
   int syscall_sem_create(int initial_value, char * id_str);
   int syscall_sem_wait(char * id_str);
   int syscall_sem_signal(char * id_str);
+  int syscall_fg(int pid);
 
 
 #endif

@@ -5,8 +5,10 @@
 
 extern uint64_t systemCall(uint64_t eax, uint64_t rbx, uint64_t rcx, uint64_t rdx, uint64_t rsi, uint64_t rdi);
 extern void putc ( void* p, char c);
+extern void halt();
 
 int main() {
-	init_printf(0, putc);
-	while(1) {}
+	while(1) {
+		halt();
+	}
 }
