@@ -32,7 +32,6 @@ process_t create_process(int module, int ppid, int vt_id, int flags)
 	add_process_list(get_pl(), ret);
 	#ifdef PROCESS_DEBUG_MSG
 	k_log("Process with pid:%d has been created!\n", ret->pid);
-	k_log("Waiting queue id: %d\n", ret->waiting_queue_id);
 	#endif
 
 	return ret;
@@ -55,7 +54,6 @@ process_t clone_process(process_t process, thread_t calling_thread)
 	add_process_list(get_pl(), ret);
 	#ifdef PROCESS_DEBUG_MSG
 	k_log("Process with pid:%d has been created!\n", ret->pid);
-	k_log("Waiting queue id: %d\n", ret->waiting_queue_id);
 	#endif
 
 	return ret;
@@ -80,7 +78,7 @@ void kill_process(process_t process)
 	unblock_waiting_threads(process);
   //Freeing the thread-list terminates all process threads
 	free_thread_queue(process->threads);
-	//free_blocked_queue(process->waiting_queue_id);
+	free_blocked_queue(process->waiting_queue_id);
 	remove_process_list(get_pl(), process);
   k_free((void *)process);
 }

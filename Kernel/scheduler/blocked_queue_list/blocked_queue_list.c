@@ -63,15 +63,20 @@ int remove_blocked_queue(int queue_id)
 
   while(curr != NULL) {
     if(curr->id == queue_id) {
-      if(prev == NULL) {
+      if(curr == first) {
         first = curr->next;
       } else {
         prev->next = curr->next;
+      }
+      if(curr == last) {
+        last = prev;
       }
       free_thread_queue(curr->queue);
       k_free(curr);
       return 1;
     }
+    prev = curr;
+    curr = curr->next;
   }
 
   return -1;
