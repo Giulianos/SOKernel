@@ -10,9 +10,13 @@ int new_thread(void * start, void * args)
   return (int)systemCall(0x160, (uint64_t)thread_wrapper_func, (uint64_t)start, (uint64_t)args, 0, 0);
 }
 
+int end_thread()
+{
+  return (int)systemCall(0x161, 0, 0, 0, 0, 0);
+}
+
 void thread_wrapper_func(void(*thread)(void *), void * args)
 {
   thread(args);
-  while(1) {}
-  //Aca hay que finalizar el thread
+  end_thread();
 }

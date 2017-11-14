@@ -29,6 +29,7 @@
   #define SYSCALL_SEM_SIGNAL 0x132
   #define SYSCALL_FG 0x150
   #define SYSCALL_NEW_THREAD 0x160
+  #define SYSCALL_EXIT_THREAD 0x161
 
   uint64_t syscall_execve(int module_number);
   void * syscall_sbrk();
@@ -51,6 +52,7 @@
   int syscall_fg(int pid);
   int syscall_ls_procs(void * ret_buffer);
   int syscall_new_thread(void * start, void * arg0, void * arg1);
+  int syscall_exit_thread();
 
 
 #endif
