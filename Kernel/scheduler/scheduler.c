@@ -21,6 +21,7 @@ int get_new_pid_scheduler();
 int get_new_tid_scheduler();
 
 static void map_thread(thread_t thread);
+static void create_userland_process_struct(process_t process, int i, void * optional_arg);
 
 int init_scheduler()
 {
@@ -104,6 +105,8 @@ int terminate_thread(thread_t thread)
   return 1;
 }
 
+/* ---------------- Process list related functions ---------------- */
+
 process_list_t get_pl()
 {
   return pl;
@@ -112,6 +115,20 @@ process_list_t get_pl()
 process_t get_process(pid_t pid)
 {
   return get_process_list(pl, pid);
+}
+
+void list_process(userland_process_struct * processes)
+{
+  each_process_list(pl, create_userland_process_struct, (void *)processes);
+}
+
+void create_userland_process_struct(process_t process, int i, void * optional_arg)
+{
+  userland_process_struct * processes = (userland_process_struct *)optional_arg;
+  processes[i].pid = process->pid;
+  processes[i].ppid = process->ppid;
+  processes[i].vt_id = process->vt_id;
+  processes[i].allocated_memory = size_pagemap(process->heap)*pageSize()/0x200000;
 }
 
 /* ---------------- Thread-suspension mechanism implementation ---------------- */

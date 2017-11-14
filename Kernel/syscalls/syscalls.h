@@ -16,7 +16,7 @@
   #define SYSCALL_VIDEODRAW 0x046
   #define SYSCALL_GETKEYSTATE 0x47
   #define SYSCALL_YIELD 0x48
-  #define SYSCALL_PS 0x49
+  #define SYSCALL_LS_PROCS 0x49
   #define SYSCALL_MQ_OPEN 0x115
   #define SYSCALL_MQ_UNLINK 0x116
   #define SYSCALL_MQ_SEND 0x117
@@ -31,7 +31,6 @@
 
   uint64_t syscall_execve(int module_number);
   void * syscall_sbrk();
-  int syscall_ps();
   int syscall_exit();
   int syscall_read(int fd, char * buff, size_t count);
   int syscall_write(int fd, char * buff, size_t count);
@@ -49,6 +48,7 @@
   int syscall_sem_wait(char * id_str);
   int syscall_sem_signal(char * id_str);
   int syscall_fg(int pid);
+  int syscall_ls_procs(void * ret_buffer);
 
 
 #endif

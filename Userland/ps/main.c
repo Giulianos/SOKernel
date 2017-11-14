@@ -8,25 +8,27 @@ extern uint64_t systemCall(uint64_t eax, uint64_t rbx, uint64_t rcx, uint64_t rd
 extern void putc ( void* p, char c);
 extern char * getModuleName(int i);
 
-typedef struct {
-	uint64_t pid;
-	int tty;
-	char module_number;
-} process_info_t;
+typedef struct
+{
+	int pid;
+	int ppid;
+	int vt_id;
+	int allocated_memory;
+} process_t;
 
 int main()
 {
-	process_info_t procs[10];
+	process_t procs[100];
 	int i = 0, quantity;
 	init_printf(0, putc);
 
 	//Obtenemos los procesos con la syscall ps (0x49)
-	quantity = 0;//systemCall(0x49, (uint64_t)procs, 0, 0, 0, 0);
+	quantity = systemCall(0x49, (uint64_t)procs, 0, 0, 0, 0);
 
-	printf("PID TTY  CMD\n");
+	printf("PID PPID TTY  MEM\n");
 	//Itermamos los procesos
 	for(; i<quantity; i++) {
-		printf("%3d tty%d %s\n", procs[i].pid, procs[i].tty, getModuleName(procs[i].module_number));
+		printf("%3d  %3d tty%d %3d\n", procs[i].pid, procs[i].ppid, procs[i].vt_id, procs[i].allocated_memory);
 	}
 
 	return 0;

@@ -47,6 +47,13 @@ pagemap_list_t remove_logical_pagemap(pagemap_list_t pm_list, void * logical)
   return pm_list;
 }
 
+int size_pagemap(pagemap_list_t pm_list)
+{
+  if(pm_list == NULL)
+    return 0;
+  return 1 + size_pagemap(pm_list->next);
+}
+
 void each_pagemap(pagemap_list_t pm_list, void(*callback)(void * logical, void * phyisical))
 {
   pagemap_list_t current = pm_list;

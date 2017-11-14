@@ -158,10 +158,34 @@ int remove_process_list(process_list_t pl, process_t process)
         curr->prev->next = curr->next;
       }
       k_free(curr);
+      pl->size--;
       return 1;
     } else {
       curr = curr->next;
     }
   } while(curr != NULL);
   return -1;
+}
+
+
+void each_process_list(process_list_t pl, callback_t callback, void * optional_arg)
+{
+  process_list_node_t curr;
+  int i = 0;
+
+  if(!callback || !pl)
+    return;
+
+  curr = pl->first;
+
+  while(curr != NULL) {
+    callback(curr->process, i, optional_arg);
+    curr = curr->next;
+    i++;
+  }
+}
+
+int size_process_list(process_list_t pl)
+{
+  return pl->size;
 }

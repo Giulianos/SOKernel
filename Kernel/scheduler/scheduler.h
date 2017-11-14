@@ -15,6 +15,7 @@
   int unblock_from_queue_thread(int queue, void(*callback)(void *));
   int terminate_thread(thread_t thread);
   int suspend_thread(thread_t thread);
+  void list_process(userland_process_struct * processes);
   process_t get_process(pid_t pid);
   process_list_t get_pl();
 

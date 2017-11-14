@@ -18,8 +18,6 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
       return (uint64_t)syscall_wait((int)rbx);
     case SYSCALL_YIELD:
       return (uint64_t)syscall_yield();
-    case SYSCALL_PS:
-      return (uint64_t)syscall_ps();
     case SYSCALL_SBRK:
       return (uint64_t)syscall_sbrk();
     case SYSCALL_MQ_OPEN:
@@ -44,6 +42,8 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
       return (uint64_t)syscall_sem_signal((char *)rbx);
     case SYSCALL_FG:
       return (uint64_t)syscall_fg((int)rbx);
+    case SYSCALL_LS_PROCS:
+      return (uint64_t)syscall_ls_procs((void *)rbx);
   }
   return 0;
 }

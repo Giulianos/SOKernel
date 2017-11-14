@@ -7,6 +7,7 @@
   typedef struct process * process_t;
   typedef struct thread * thread_t;
   typedef struct thread_queue * thread_queue_t;
+  typedef struct userland_process_struct userland_process_struct;
 
   struct process
   {
@@ -17,6 +18,14 @@
     pagemap_list_t heap;
     thread_queue_t threads;
     int waiting_queue_id; /*threads waiting for this process*/
+  };
+
+  struct userland_process_struct
+  {
+    pid_t pid;
+    pid_t ppid;
+    int vt_id;
+    int allocated_memory;
   };
 
   process_t create_process(int module, int ppid, int vt_id, int flags);
