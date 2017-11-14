@@ -70,6 +70,7 @@ void schedule_scheduler()
 
 void map_thread(thread_t thread)
 {
+  map_pagemap_list(thread->process->heap);
   map_physical(get_logical_userland_stack_page() ,thread->stack_page);
   map_process(thread->process->code);
 }
@@ -128,7 +129,7 @@ void create_userland_process_struct(process_t process, int i, void * optional_ar
   processes[i].pid = process->pid;
   processes[i].ppid = process->ppid;
   processes[i].vt_id = process->vt_id;
-  processes[i].allocated_memory = size_pagemap(process->heap)*pageSize()/0x200000;
+  processes[i].allocated_memory = size_pagemap(process->heap)*pageSize()/0x100000;
 }
 
 /* ---------------- Thread-suspension mechanism implementation ---------------- */

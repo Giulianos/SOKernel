@@ -14,6 +14,7 @@
   pagemap_list_t remove_physical_pagemap(pagemap_list_t pm_list, void * physical);
   pagemap_list_t remove_logical_pagemap(pagemap_list_t pm_list, void * logical);
   void each_pagemap(pagemap_list_t pm_list, void(*callback)(void * logical, void * phyisical));
+  void * get_last_logical(pagemap_list_t pm_list);
   int size_pagemap(pagemap_list_t pm_list);
 
 #endif

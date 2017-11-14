@@ -4,7 +4,7 @@
 
 pagemap_list_t add_pagemap(pagemap_list_t pm_list, void * physical, void * logical)
 {
-  pagemap_list_t last = pm_list;
+  pagemap_list_t curr = pm_list;
   pagemap_list_t new_node = (pagemap_list_t)k_malloc(sizeof(struct pagemap_list_node));
 
   if(new_node == NULL)
@@ -20,10 +20,10 @@ pagemap_list_t add_pagemap(pagemap_list_t pm_list, void * physical, void * logic
   if(pm_list == NULL) {
     return new_node;
   }
-  while(last->next != NULL) {
-    last = last->next;
+  while(curr->next != NULL) {
+    curr = curr->next;
   }
-  last->next = new_node;
+  curr->next = new_node;
   return pm_list;
 }
 
@@ -52,6 +52,21 @@ int size_pagemap(pagemap_list_t pm_list)
   if(pm_list == NULL)
     return 0;
   return 1 + size_pagemap(pm_list->next);
+}
+
+void * get_last_logical(pagemap_list_t pm_list)
+{
+  pagemap_list_t curr = pm_list;
+
+  if(curr == NULL)
+    return NULL;
+
+  while(curr->next != NULL) {
+    curr = curr->next;
+  }
+
+  return curr->logical;
+
 }
 
 void each_pagemap(pagemap_list_t pm_list, void(*callback)(void * logical, void * phyisical))

@@ -33,5 +33,6 @@
   void kill_process(process_t process);
   thread_t get_main_thread_process(process_t process);
   void replace_process_image(process_t process, int module);
+  void * allocate_page_heap_process(process_t process);
 
 #endif

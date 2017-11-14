@@ -1,5 +1,6 @@
 /* sampleCodeModule.c */
 #include <stdint.h>
+#include <stdlib.h>
 #include "stdlib/printf.h"
 #include "stdlib/string.h"
 #include "stdlib/stdio.h"
@@ -16,20 +17,29 @@ typedef struct
 	int allocated_memory;
 } process_t;
 
+int get_process_list(process_t * procs);
+
 int main()
 {
-	process_t procs[100];
+	process_t * procs;
 	int i = 0, quantity;
-	init_printf(0, putc);
 
-	//Obtenemos los procesos con la syscall ps (0x49)
-	quantity = systemCall(0x49, (uint64_t)procs, 0, 0, 0, 0);
+	//Obtenemos la cantidad de procesos con la syscall ls_procs pasandole NULL como buffer
+	quantity = get_process_list(NULL);
+	procs = (process_t *)malloc(sizeof(process_t)*quantity);
+	//Asumimos que la cantidad de procesos no cambio desde la llamada anterior
+	get_process_list(procs);
 
-	printf("PID PPID TTY  MEM\n");
+	printf("PID PPID TTY   MEM\n");
 	//Itermamos los procesos
 	for(; i<quantity; i++) {
-		printf("%3d  %3d tty%d %3d\n", procs[i].pid, procs[i].ppid, procs[i].vt_id, procs[i].allocated_memory);
+		printf("%3d  %3d tty%d %3dM\n", procs[i].pid, procs[i].ppid, procs[i].vt_id + 1, procs[i].allocated_memory);
 	}
 
 	return 0;
+}
+
+int get_process_list(process_t * procs)
+{
+	return (int)systemCall(0x49, (void *)procs, 0, 0, 0, 0);
 }

@@ -88,6 +88,24 @@ void free_process_page(void * physical, void * logical)
 	freePage(physical);
 }
 
+void * allocate_page_heap_process(process_t process)
+{
+	void * new_addr;
+	void * new_addr_phys;
+
+	if(process == NULL)
+		return NULL;
+
+	if(process->heap == NULL)
+		new_addr = get_logical_userland_heap_base_page();
+	else
+		new_addr = (void *)((size_t)get_last_logical(process->heap) + (size_t)pageSize());
+	process->heap = add_pagemap(process->heap, new_addr_phys = allocatePage(), new_addr);
+	map_physical_reload(new_addr, new_addr_phys);
+
+	return new_addr;
+}
+
 void unblock_waiting_threads(process_t process)
 {
 	while((unblock_from_queue_thread(process->waiting_queue_id, NULL))!=-1) {

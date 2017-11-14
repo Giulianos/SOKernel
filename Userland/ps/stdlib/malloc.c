@@ -1,8 +1,10 @@
 #include <stdlib.h>
-#include <lib.h>
-#include <page_allocator.h>
+#include <stdint.h>
+#include "stdlib.h"
 
-#define NALLOC (pageSize()/sizeof(Header))
+#define PAGE_SIZE 0x200000
+
+#define NALLOC (PAGE_SIZE/sizeof(Header))
 
 typedef long Align;
 
@@ -20,10 +22,13 @@ typedef union header Header;
 static Header base;
 static Header *freep = NULL;
 
-static Header *morecore(size_t nblocks);
-void k_free(void *ptr);
+extern uint64_t systemCall(uint64_t eax, uint64_t rbx, uint64_t rcx, uint64_t rdx, uint64_t rsi, uint64_t rdi);
 
-void * k_malloc(size_t nbytes)
+static Header *morecore(size_t nblocks);
+static void * sbrk();
+void free(void *ptr);
+
+void * malloc(size_t nbytes)
 {
   Header *currp;
   Header *prevp;
@@ -65,17 +70,17 @@ static Header *morecore(size_t nunits)
   if (nunits < NALLOC) {
     nunits = NALLOC;
   }
-  freemem = allocatePage(nunits * sizeof(Header));
+  freemem = sbrk();
   if (freemem == NULL) {
     return NULL;
   }
   insertp = (Header *) freemem;
   insertp->s.size = nunits;
-  k_free((void *) (insertp + 1));
+  free((void *) (insertp + 1));
   return freep;
 }
 
-void k_free(void *ptr)
+void free(void *ptr)
 {
   Header *insertp, *currp;
 
@@ -100,4 +105,9 @@ void k_free(void *ptr)
     currp->s.next = insertp;
   }
   freep = currp;
+}
+
+void * sbrk()
+{
+  return (void *)systemCall(0x2d, 0, 0, 0, 0, 0);
 }
