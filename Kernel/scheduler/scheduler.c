@@ -9,6 +9,7 @@
 #include <lib.h>
 
 #define SCHEDULER_BLOCK_DEBUG_MSG
+#define SCHEDULER_DEBUG_MSG
 
 static thread_cqueue_t ready_queue_scheduler;
 static thread_queue_t suspended_queue_scheduler;
@@ -20,7 +21,6 @@ static process_list_t pl;
 int get_new_pid_scheduler();
 int get_new_tid_scheduler();
 
-static void map_thread(thread_t thread);
 static void create_userland_process_struct(process_t process, int i, void * optional_arg);
 
 int init_scheduler()
@@ -45,9 +45,9 @@ int add_scheduler(thread_t thread)
   if(thread->tid < 0)
     thread->tid = get_new_tid_scheduler();
   if(offer_thread_cqueue(ready_queue_scheduler, thread)>0) {
-    #ifdef SCHEDULER_DEBUG_MSG
+    //#ifdef SCHEDULER_DEBUG_MSG
     k_log("Added thread with tid:%d to the scheduler\n", thread->tid);
-    #endif
+    //#endif
     return 1;
   }
   return -1;

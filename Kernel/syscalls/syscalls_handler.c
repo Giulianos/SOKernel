@@ -44,6 +44,8 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
       return (uint64_t)syscall_fg((int)rbx);
     case SYSCALL_LS_PROCS:
       return (uint64_t)syscall_ls_procs((void *)rbx);
+    case SYSCALL_NEW_THREAD:
+      return (uint64_t)syscall_new_thread((void *)rbx, (void *)rcx, (void *)rdx);
   }
   return 0;
 }

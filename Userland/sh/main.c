@@ -56,6 +56,12 @@ char parse_command(char * input)
 	if(strcmp(input, "ps&") == 0) {
 		return run_app(4, 0);
 	}
+	if(strcmp(input, "sample") == 0) {
+		return run_app(7, 1);
+	}
+	if(strcmp(input, "sample&") == 0) {
+		return run_app(7, 0);
+	}
 
 	return 0;
 }
