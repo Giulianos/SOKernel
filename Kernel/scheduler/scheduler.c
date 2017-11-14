@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <lib.h>
 
-#define SCHEDULER_BLOCK_DEBUG_MSG
-#define SCHEDULER_DEBUG_MSG
 
 static thread_cqueue_t ready_queue_scheduler;
 static thread_queue_t suspended_queue_scheduler;

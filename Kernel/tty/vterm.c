@@ -36,7 +36,7 @@ typedef struct read_block_details * read_block_details_t;
 static void scroll_vterm(vterm_t vt);
 static void putchar_vterm(vterm_t vt, char c);
 static void read_unblock_callback(void * info);
-static void dump_buffer(vterm_t vt, char * dest);
+static void dump_buffer(vterm_t vt, char * dest, size_t count);
 static void eraseChar_vterm(vterm_t vt);
 
 static int tty_last_id = 0;
@@ -116,14 +116,21 @@ void keyPressed_vterm(vterm_t vt, keycode_t key)
 void read_unblock_callback(void * info)
 {
   read_block_details_t det = (read_block_details_t)info;
-  dump_buffer(det->vt, det->buffer);
+  dump_buffer(det->vt, det->buffer, det->count);
   k_free(info);
 }
 
-void dump_buffer(vterm_t vt, char * dest)
+void dump_buffer(vterm_t vt, char * dest, size_t count)
 {
-  while(!bufferIsEmpty(&(vt->kbBuffer))) {
-    *(dest++) = getCharBuffer(&(vt->kbBuffer));
+  if(!count)
+  {
+    while(!bufferIsEmpty(&(vt->kbBuffer))) {
+      *(dest++) = getCharBuffer(&(vt->kbBuffer));
+    }
+  } else {
+    while(!bufferIsEmpty(&(vt->kbBuffer)) && count--) {
+      *(dest++) = getCharBuffer(&(vt->kbBuffer));
+    }
   }
 }
 

@@ -62,7 +62,12 @@ char parse_command(char * input)
 	if(strcmp(input, "sample&") == 0) {
 		return run_app(7, 0);
 	}
-
+	if(strcmp(input, "philosophers") == 0) {
+		return run_app(8, 1);
+	}
+	if(strcmp(input, "philosophers&") == 0) {
+		return run_app(8, 0);
+	}
 	return 0;
 }
 

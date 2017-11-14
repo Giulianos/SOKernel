@@ -1,6 +1,6 @@
 include Makefile.inc
 
-all: idle init sh help ps producer consumer sample
+all: idle init sh help ps producer consumer sample philosophers
 
 idle:
 	cd idle; make
@@ -26,6 +26,9 @@ consumer:
 sample:
 	cd sample; make
 
+philosophers:
+	cd philosophers; make
+
 clean:
 	cd idle; make clean
 	cd init; make clean
@@ -35,7 +38,8 @@ clean:
 	cd producer; make clean
 	cd consumer; make clean
 	cd sample; make clean
+	cd philosophers; make clean
 	rm -rf *.bin
 
 
-.PHONY: all clean idle init sh help ps producer consumer sample
+.PHONY: all clean idle init sh help ps producer consumer sample philosophers

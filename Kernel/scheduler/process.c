@@ -7,7 +7,6 @@
 #include "thread.h"
 #include "thread_queue/thread_queue.h"
 
-#define PROCESS_DEBUG_MSG
 
 extern int get_new_pid_scheduler();
 

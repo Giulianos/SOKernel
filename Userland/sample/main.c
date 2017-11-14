@@ -12,7 +12,7 @@ static thread_num = 0;
 
 void impresor(int i)
 {
-	printf("Soy el thread %d\n", i);
+	printf("Soy el thread %d, esto es global %d\n", i);
 }
 
 int main()

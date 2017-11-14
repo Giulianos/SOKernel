@@ -10,9 +10,16 @@ extern void putc ( void* p, char c);
 int main()
 {
 	init_printf(0, putc);
-	printf("Comandos disponibles:\n");
-	printf("help\n");
-	printf("ps\n");
+	printf("====================================================================\n");
+	printf("::::::::::::::::::::::: Comandos disponibles :::::::::::::::::::::::\n");
+	printf("====================================================================\n");
+	printf("help             Muestra los comandos disponibles\n");
+	printf("ps               Muestra la lista de procesos\n");
+	printf("producer         Abre un productor interactivo\n");
+	printf("consumer         Abre un consumidor interactivo\n");
+	printf("philosophers     Abre el programa 'philosophers'\n");
+	printf("chat             Permite chatear entre procesos (demo message queue)\n");
+	printf("====================================================================\n");
 
 	return 0;
 }
