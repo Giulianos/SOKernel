@@ -5,8 +5,10 @@
 #include "stdlib/printf.h"
 #include "stdlib/string.h"
 #include "stdlib/stdlib.h"
+#include "stdlib/stdio.h"
 #include "philosophers.h"
 #include "philosophersGUI.h"
+#include "threadlib/threadlib.h"
 
 #define philosopherCount 2
 #define philosopherMax 40
@@ -29,8 +31,6 @@ int	philosophersQuantity = philosopherCount;
 
 void initSemNames()
 {
-	char * auxStr;
-
 	for(int i = 0; i < philosopherMax; i++) {
 		philoExists[i] = 1;
 		strncpy(semaphores[i], "philo_000", 10);
@@ -62,6 +62,7 @@ void * philosopher(void * id) {
 		putForks(*(int*)id);
 	}
 	mx_close(semaphores[*(int*)id]);
+	return 0;
 }
 
 void takeForks(int id) {

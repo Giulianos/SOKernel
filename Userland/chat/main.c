@@ -4,11 +4,12 @@
 #include "stdlib/printf.h"
 #include "stdlib/string.h"
 #include "stdlib/stdio.h"
+#include "stdlib/stdio.h"
+#include "mqlib/mqlib.h"
 
 int main()
 {
 	char buf[255];
-	int aux = 0;
 
 	mq_open("chat");
 
@@ -24,7 +25,7 @@ int main()
 		}
 	} else {
 		while(1) {
-			aux = mq_receive("chat", buf, 255);
+			mq_receive("chat", buf, 255);
 			printf("received: %s\n", buf);
 		}
 	}

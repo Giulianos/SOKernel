@@ -4,6 +4,7 @@
 #include "stdlib/printf.h"
 #include "mqlib/mqlib.h"
 #include "stdlib/string.h"
+#include "stdlib/stdio.h"
 
 #define BUF_SIZE 5
 #define MAX_PRINT_BUF 50

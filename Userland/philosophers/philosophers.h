@@ -7,4 +7,7 @@ typedef enum {
 	Eating = 2
 } State;
 
+void decrementPhilosophers();
+void incrementPhilosophers();
+
 #endif

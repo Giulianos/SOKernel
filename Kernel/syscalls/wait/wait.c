@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "../../scheduler/scheduler.h"
+#include <lib.h>
 
 int syscall_wait(int pid)
 {

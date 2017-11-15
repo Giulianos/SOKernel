@@ -18,6 +18,7 @@ int main()
 	printf("consumer         Abre un consumidor interactivo\n");
 	printf("philosophers     Abre el programa 'philosophers'\n");
 	printf("chat             Permite chatear entre procesos (demo message queue)\n");
+	printf("sample           Demo de sincronizacion y threads\n");
 	printf("====================================================================\n");
 
 	return 0;

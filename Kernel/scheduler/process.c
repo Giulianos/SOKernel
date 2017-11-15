@@ -1,11 +1,13 @@
 #include <stdlib.h>
 #include <lib.h>
-#include <page_allocator.h>
-#include <paging.h>
+#include "../page_allocator/page_allocator.h"
+#include "../paging_manager/paging.h"
 #include "../ModulesManager/modules.h"
 #include "process.h"
 #include "thread.h"
 #include "thread_queue/thread_queue.h"
+#include "scheduler.h"
+#include "process_list/process_list.h"
 
 
 extern int get_new_pid_scheduler();

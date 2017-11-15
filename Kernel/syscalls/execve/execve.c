@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <scheduler.h>
+#include "../scheduler/scheduler.h"
 
 int syscall_execve(int module_number)
 {

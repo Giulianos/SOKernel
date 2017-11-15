@@ -1,4 +1,5 @@
 #include "../../scheduler/scheduler.h"
+#include "message_queue.h"
 #include <stdlib.h>
 #include <lib.h>
 
@@ -86,7 +87,6 @@ int write_message_queue(message_queue_t mq, const char * msg, size_t count)
 
 int read_message_queue(message_queue_t mq, char * buf, size_t count)
 {
-  message_t aux;
   read_block_details_t details;
 
   if(mq->first_msg == NULL) {

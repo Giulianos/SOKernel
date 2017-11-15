@@ -1,12 +1,14 @@
+#include "scheduler.h"
 #include "thread_cqueue/thread_cqueue.h"
 #include "blocked_queue_list/blocked_queue_list.h"
 #include "process_list/process_list.h"
 #include "process.h"
 #include "thread.h"
-#include <page_allocator.h>
-#include <paging.h>
+#include "../page_allocator/page_allocator.h"
+#include "../paging_manager/paging.h"
 #include <stdlib.h>
 #include <lib.h>
+#include "../paging_manager/pagemap_list/pagemap_list.h"
 
 
 static thread_cqueue_t ready_queue_scheduler;

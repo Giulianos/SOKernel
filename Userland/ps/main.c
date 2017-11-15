@@ -41,5 +41,5 @@ int main()
 
 int get_process_list(process_t * procs)
 {
-	return (int)systemCall(0x49, (void *)procs, 0, 0, 0, 0);
+	return (int)systemCall(0x49, (uint64_t)procs, 0, 0, 0, 0);
 }

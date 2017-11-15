@@ -10,4 +10,5 @@ int syscall_mx_unlock(char * id_str)
     return -1;
   }
   unlock_mutex(aux);
+  return 1;
 }

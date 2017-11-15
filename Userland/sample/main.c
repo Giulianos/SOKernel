@@ -11,8 +11,6 @@
 
 extern void putc ( void* p, char c);
 
-static thread_num = 0;
-
 typedef struct args
 {
 	int thread_num;
@@ -50,5 +48,5 @@ int main()
 	for(i = 0; i < 4; i++) {
 		sem_wait("sem_sample");
 	}
-
+	return 0;
 }

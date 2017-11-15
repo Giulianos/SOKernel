@@ -6,7 +6,7 @@
   #include "process_list/process_list.h"
 
   int init_scheduler();
-  void add_scheduler(thread_t thread);
+  int add_scheduler(thread_t thread);
   void schedule_scheduler();
   thread_t current_thread();
   int create_blocked_queue();

@@ -10,4 +10,5 @@ int syscall_sem_wait(char * id_str)
     return -1;
   }
   wait_semaphore(aux);
+  return 1;
 }

@@ -1,6 +1,7 @@
 #include "../VideoDriver/driver.h"
 #include "vterm.h"
 #include "tty.h"
+#include "../include/lib.h"
 
 #define KERNEL_LOG_VT 7
 

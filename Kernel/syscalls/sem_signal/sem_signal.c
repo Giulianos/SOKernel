@@ -10,4 +10,5 @@ int syscall_sem_signal(char * id_str)
     return -1;
   }
   signal_semaphore(aux);
+  return 1;
 }
