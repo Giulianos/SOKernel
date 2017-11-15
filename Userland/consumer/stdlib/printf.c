@@ -29,11 +29,13 @@
  * OF SUCH DAMAGE.
  */
 
-#include "printf.h"
+ #include "printf.h"
 
-typedef void (*putcf) (void*,char);
-static putcf stdout_putf;
-static void* stdout_putp;
+ extern void putc ( void* p, char c);
+
+ typedef void (*putcf) (void*,char);
+ static putcf stdout_putf = putc;
+ static void* stdout_putp = 0;
 
 
 #ifdef PRINTF_LONG_SUPPORT

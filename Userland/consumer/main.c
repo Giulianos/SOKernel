@@ -15,7 +15,6 @@ int main()
 	char print_buf[MAX_PRINT_BUF];
 	int salir = 0;
 
-	init_printf(0, putc);
 	printf(":::CONSUMER:::\n");
 	printf("Presione enter para recibir mensajes del producer o\nsalga con \".salir\"\n");
 

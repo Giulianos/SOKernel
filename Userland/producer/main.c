@@ -15,7 +15,6 @@ int main()
 	char in_buf[MAX_IN_BUF];
 	int salir = 0;
 
-	init_printf(0, putc);
 	printf(":::PRODUCER:::\n");
 	printf("Genere mensajes para enviar al consumer o\nsalga con \".salir\"\n");
 

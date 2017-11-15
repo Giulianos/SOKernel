@@ -9,7 +9,7 @@ int mx_create(char * id_str)
 }
 int mx_lock(char * id_str)
 {
-  return (int)systemCall(0x121, (uint64_t)id_str, (uint64_t)id, 0, 0, 0);
+  return (int)systemCall(0x121, (uint64_t)id_str, 0, 0, 0, 0);
 }
 int mx_unlock(char * id_str)
 {

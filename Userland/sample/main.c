@@ -4,27 +4,51 @@
 #include "stdlib/printf.h"
 #include "stdlib/string.h"
 #include "stdlib/stdio.h"
+#include "stdlib/stdlib.h"
+#include "mxlib/mxlib.h"
+#include "semlib/semlib.h"
 #include "threadlib/threadlib.h"
 
 extern void putc ( void* p, char c);
 
 static thread_num = 0;
 
-void impresor(int i)
+typedef struct args
 {
-	printf("Soy el thread %d, esto es global %d\n", i);
+	int thread_num;
+	int * arg1;
+} args_t;
+
+void impresor(args_t * args)
+{
+	mx_lock("mutex_sample"); //Begin critic zone
+	printf("Soy el thread %d, esto esta en el heap: %d\n", args->thread_num, args->arg1);
+	sem_signal("sem_sample");
+	mx_unlock("mutex_sample"); //End critic zone
 }
 
 int main()
 {
 	int i = 0;
-	init_printf(0, putc);
+	args_t * args;
+	int * variable_heap = (int *)malloc(sizeof(int));
+
+	mx_create("mutex_sample");
+	sem_create("sem_sample", 0);
+
+	*variable_heap = 10;
 
 	printf("Soy sample, voy a crear 4 threads\n");
 
-	for(; i < 4; i++)
-		new_thread(impresor, (void *)i);
+	for(; i < 4; i++) {
+		args = (args_t *)malloc(sizeof(args_t));
+		args->thread_num = i;
+		args->arg1 = variable_heap;
+		new_thread(impresor, (void *)args);
+	}
 
-	while(1){}
+	for(i = 0; i < 4; i++) {
+		sem_wait("sem_sample");
+	}
 
 }

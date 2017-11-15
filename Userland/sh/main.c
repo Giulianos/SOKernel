@@ -20,7 +20,6 @@ int main()
 {
 	char input[80];
 
-	init_printf(0, putc);
 	while(1) {
 		printf(">");
 		gets(input);
@@ -67,6 +66,12 @@ char parse_command(char * input)
 	}
 	if(strcmp(input, "philosophers&") == 0) {
 		return run_app(8, 0);
+	}
+	if(strcmp(input, "chat") == 0) {
+		return run_app(9, 1);
+	}
+	if(strcmp(input, "chat&") == 0) {
+		return run_app(9, 0);
 	}
 	return 0;
 }
