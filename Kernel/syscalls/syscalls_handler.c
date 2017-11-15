@@ -34,6 +34,8 @@ uint64_t syscall_handler(uint64_t rax,uint64_t rbx,uint64_t rcx,uint64_t rdx,uin
       return (uint64_t)syscall_mx_lock((char *)rbx);
     case SYSCALL_MX_UNLOCK:
       return (uint64_t)syscall_mx_unlock((char *)rbx);
+    case SYSCALL_MX_CLOSE:
+      return (uint64_t)syscall_mx_close((char *)rbx);
     case SYSCALL_SEM_CREATE:
       return (uint64_t)syscall_sem_create((int)rcx, (char *)rbx);
     case SYSCALL_SEM_WAIT:

@@ -15,3 +15,7 @@ int mx_unlock(char * id_str)
 {
   return (int)systemCall(0x122, (uint64_t)id_str, 0, 0, 0, 0);
 }
+int mx_close(char * id_str)
+{
+  return (int)systemCall(0x123, (uint64_t)id_str, 0, 0, 0, 0);
+}

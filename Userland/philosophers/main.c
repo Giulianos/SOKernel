@@ -61,6 +61,7 @@ void * philosopher(void * id) {
 
 		putForks(*(int*)id);
 	}
+	mx_close(semaphores[*(int*)id]);
 }
 
 void takeForks(int id) {
@@ -157,6 +158,7 @@ void incrementPhilosophers()
 	if(philosophersQuantity < philosopherMax) {
 
 		mx_create(semaphores[philosophersQuantity]);
+		mx_unlock(semaphores[philosophersQuantity]);
 		mx_lock(semaphores[philosophersQuantity]);
 
 		philosopherId[philosophersQuantity] = philosophersQuantity;

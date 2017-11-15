@@ -24,6 +24,7 @@
   #define SYSCALL_MX_CREATE 0x120
   #define SYSCALL_MX_LOCK 0x121
   #define SYSCALL_MX_UNLOCK 0x122
+  #define SYSCALL_MX_CLOSE 0x123
   #define SYSCALL_SEM_CREATE 0x130
   #define SYSCALL_SEM_WAIT 0x131
   #define SYSCALL_SEM_SIGNAL 0x132
@@ -46,6 +47,7 @@
   int syscall_mx_create(char * id_str);
   int syscall_mx_lock(char * id_str);
   int syscall_mx_unlock(char * id_str);
+  int syscall_mx_close(char * id_str);
   int syscall_sem_create(int initial_value, char * id_str);
   int syscall_sem_wait(char * id_str);
   int syscall_sem_signal(char * id_str);
