@@ -4,5 +4,5 @@
   void _exit();
   int rand();
   int fork();
-  
+
 #endif

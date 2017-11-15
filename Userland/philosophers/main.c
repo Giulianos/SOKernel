@@ -20,6 +20,7 @@ void test(int i);
 int randRange(int min, int max);
 
 State state[philosopherMax];
+char philoExists[philosopherMax];
 
 char * mutex = "philo_crit_zone";
 char semaphores[10][philosopherMax];
@@ -31,6 +32,7 @@ void initSemNames()
 	char * auxStr;
 
 	for(int i = 0; i < philosopherMax; i++) {
+		philoExists[i] = 1;
 		strncpy(semaphores[i], "philo_000", 10);
 		semaphores[i][8] = i%10 + '0';
 		semaphores[i][7] = (i%100)/10 + '0';
@@ -46,7 +48,7 @@ static void sleep(int time)
 }
 
 void * philosopher(void * id) {
-	while(1) {
+	while(philoExists[*(int*)id]) {
 		//Think
 		//sleep(10);
 		sleep(randRange(5, 10));
@@ -127,16 +129,26 @@ int main(int argc, char ** argv) {
 
 	while(1) {
 		switch(getchar()) {
+			case 'd':
+			case 'D': decrementPhilosophers(); break;
 			case 'i':
 			case 'I': incrementPhilosophers(); break;
-			case 'd':
-			case 'D': /*decrementPhilosophers();*/ break;
 			case 'q':
 			case 'Q': _exit(0);
 		}
 	}
 
 	return 0;
+}
+
+void decrementPhilosophers()
+{
+	if (philosophersQuantity <= 1) {
+		printf("No puede haber menos filosofos!\n");
+		return;
+	}
+	philoExists[philosophersQuantity-1] = 0;
+	philosophersQuantity--;
 }
 
 void incrementPhilosophers()
@@ -149,13 +161,14 @@ void incrementPhilosophers()
 
 		philosopherId[philosophersQuantity] = philosophersQuantity;
 		state[philosophersQuantity] = Thinking;
+		philoExists[philosophersQuantity] = 1;
 
 		new_thread(philosopher, &philosopherId[philosophersQuantity]);
 
 		philosophersQuantity++;
 
 	} else {
-		printf("Se ha llegado al maximo de filosofos!\n");
+		printf("No puede haber mas filosofos!\n");
 	}
 	return;
 }

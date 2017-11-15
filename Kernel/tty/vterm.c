@@ -131,6 +131,9 @@ void dump_buffer(vterm_t vt, char * dest, size_t count)
     while(!bufferIsEmpty(&(vt->kbBuffer)) && count--) {
       *(dest++) = getCharBuffer(&(vt->kbBuffer));
     }
+    while(!bufferIsEmpty(&(vt->kbBuffer))) {
+      getCharBuffer(&(vt->kbBuffer));
+    }
   }
 }
 
